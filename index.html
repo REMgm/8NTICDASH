@@ -405,10 +405,28 @@ function DashboardPage({ commits, loading, onRefresh }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const [toast, setToast] = useState(null);
+  const [timeFrame, setTimeFrame] = useState('day'); // hour, day, week, month
 
-  // Process commits for display
+  // Time frame options
+  const timeFrameOptions = [
+    { value: 'hour', label: '1 Hour', ms: 60 * 60 * 1000 },
+    { value: 'day', label: '1 Day', ms: 24 * 60 * 60 * 1000 },
+    { value: 'week', label: '1 Week', ms: 7 * 24 * 60 * 60 * 1000 },
+    { value: 'month', label: '1 Month', ms: 30 * 24 * 60 * 60 * 1000 },
+  ];
+
+  // Filter commits based on time frame
+  const filteredCommits = useMemo(() => {
+    const now = new Date();
+    const selectedOption = timeFrameOptions.find(t => t.value === timeFrame);
+    const cutoffTime = new Date(now.getTime() - selectedOption.ms);
+    
+    return commits.filter(c => new Date(c.commit.author.date) >= cutoffTime);
+  }, [commits, timeFrame]);
+
+  // Process filtered commits for display
   const recentCommits = useMemo(() => {
-    return commits.slice(0, 8).map(commit => {
+    return filteredCommits.slice(0, 10).map(commit => {
       const author = commit.commit.author.name;
       const agentKey = Object.keys(AGENT_CONFIG).find(k => 
         author.toLowerCase().includes(k.toLowerCase()) || 
@@ -421,24 +439,24 @@ function DashboardPage({ commits, loading, onRefresh }) {
         time: formatRelativeTime(commit.commit.author.date),
       };
     });
-  }, [commits]);
+  }, [filteredCommits]);
 
-  // Calculate stats
+  // Calculate stats based on filtered commits
   const stats = useMemo(() => {
     const agentCommits = {};
-    commits.forEach(c => {
+    filteredCommits.forEach(c => {
       const author = c.commit.author.name;
       const key = Object.keys(AGENT_CONFIG).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
       agentCommits[key] = (agentCommits[key] || 0) + 1;
     });
     return {
-      total: commits.length,
+      total: filteredCommits.length,
       online: 4, // KIMI, SMARTY, UMBREL, REM
       activeMissions: 1,
       revenue: '$10',
       agentCommits,
     };
-  }, [commits]);
+  }, [filteredCommits]);
 
   // Initialize chart
   useEffect(() => {
@@ -450,10 +468,10 @@ function DashboardPage({ commits, loading, onRefresh }) {
     const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
     const tickColor = isDark ? '#78716c' : '#a8a29e';
     
-    // Group commits by hour and repo
+    // Group commits by hour and repo (using filtered commits)
     const hourData8NTIC = {};
     const hourDataDASH = {};
-    commits.forEach(c => {
+    filteredCommits.forEach(c => {
       const hour = new Date(c.commit.author.date).getHours();
       const key = `${hour.toString().padStart(2,'0')}:00`;
       if (c.repoSource === '8NTICDASH') {
@@ -519,7 +537,7 @@ function DashboardPage({ commits, loading, onRefresh }) {
       }
     });
     return () => { if(chartInstance.current) chartInstance.current.destroy(); };
-  }, [commits, loading]);
+  }, [filteredCommits, loading]);
 
   return (
     <div>
@@ -530,20 +548,45 @@ function DashboardPage({ commits, loading, onRefresh }) {
           <div className="page-title">Dashboard</div>
           <div className="page-subtitle">8NTIC Reflective Agent Mesh — Day {getDayNumber()} • Checking {GITHUB_REPOS.length} repos</div>
         </div>
-        <button 
-          className={`refresh-btn ${loading ? 'spinning' : ''}`} 
-          onClick={() => fetchCommits(true)} 
-          disabled={loading}
-          style={{ 
-            background: loading ? 'var(--bg-secondary)' : 'var(--accent)', 
-            color: loading ? 'var(--text-muted)' : '#fff',
-            borderColor: 'var(--accent)',
-            fontWeight: 600,
-            padding: '12px 20px'
-          }}
-        >
-          <Icons.refresh /> {loading ? 'Updating...' : 'Update'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Time Frame Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-card)', padding: '4px', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+            {timeFrameOptions.map(option => (
+              <button
+                key={option.value}
+                onClick={() => setTimeFrame(option.value)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: timeFrame === option.value ? 'var(--accent)' : 'transparent',
+                  color: timeFrame === option.value ? '#fff' : 'var(--text-secondary)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontFamily: 'var(--font-mono)',
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>          
+          <button 
+            className={`refresh-btn ${loading ? 'spinning' : ''}`} 
+            onClick={() => onRefresh(true)} 
+            disabled={loading}
+            style={{ 
+              background: loading ? 'var(--bg-secondary)' : 'var(--accent)', 
+              color: loading ? 'var(--text-muted)' : '#fff',
+              borderColor: 'var(--accent)',
+              fontWeight: 600,
+              padding: '12px 20px'
+            }}
+          >
+            <Icons.refresh /> {loading ? 'Updating...' : 'Update'}
+          </button>
+        </div>
       </div>
 
       <div className="grid-4 fade-up stagger-1" style={{ marginBottom: 24 }}>
@@ -563,7 +606,7 @@ function DashboardPage({ commits, loading, onRefresh }) {
             <AnimatedNumber value={stats.total} />
           </div>
           <div className="stat-label">Total Commits</div>
-          <div className="stat-delta" style={{ color: 'var(--text-muted)' }}>Last 30 days</div>
+          <div className="stat-delta" style={{ color: 'var(--text-muted)' }}>Last {timeFrameOptions.find(t => t.value === timeFrame)?.label.toLowerCase()}</div>
         </div>
         <div className="card stat-card">
           <div className="stat-ring"></div>
@@ -586,7 +629,7 @@ function DashboardPage({ commits, loading, onRefresh }) {
       <div className="grid-2" style={{ marginBottom: 24 }}>
         <div className="card fade-up stagger-2">
           <div className="card-header">
-            <div className="card-title">Commit Activity</div>
+            <div className="card-title">Commit Activity — Last {timeFrameOptions.find(t => t.value === timeFrame)?.label}</div>
             <span className="live-indicator">Live</span>
           </div>
           {loading ? (
