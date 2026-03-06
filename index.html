@@ -3,239 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>8NTIC — Control Center v2.0</title>
+<title>8NTIC — Control Center v2.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg-primary:#fafaf9;--bg-secondary:#f5f5f4;--bg-card:#ffffff;--bg-card-hover:#fafaf9;
-  --text-primary:#1c1917;--text-secondary:#57534e;--text-muted:#a8a29e;
-  --border:#e7e5e4;--border-focus:#d6d3d1;
-  --accent:#0ea5e9;--accent-dim:rgba(14,165,233,0.08);
-  --green:#22c55e;--green-dim:rgba(34,197,94,0.1);
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.1);
-  --red:#ef4444;--red-dim:rgba(239,68,68,0.1);
-  --purple:#a855f7;--purple-dim:rgba(168,85,247,0.1);
-  --font-display:'Space Grotesk',system-ui,sans-serif;
-  --font-mono:'JetBrains Mono',monospace;
-  --radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.06);
-  --shadow-lg:0 4px 12px rgba(0,0,0,0.06),0 2px 4px rgba(0,0,0,0.04);
-}
-[data-theme="dark"]{
-  --bg-primary:#0c0a09;--bg-secondary:#1c1917;--bg-card:#1c1917;--bg-card-hover:#292524;
-  --text-primary:#fafaf9;--text-secondary:#a8a29e;--text-muted:#78716c;
-  --border:#292524;--border-focus:#44403c;
-  --accent:#38bdf8;--accent-dim:rgba(56,189,248,0.1);
-  --green-dim:rgba(34,197,94,0.15);--amber-dim:rgba(245,158,11,0.15);
-  --red-dim:rgba(239,68,68,0.15);--purple-dim:rgba(168,85,247,0.15);
-  --shadow:0 1px 3px rgba(0,0,0,0.2);--shadow-lg:0 4px 12px rgba(0,0,0,0.3);
-}
-body{font-family:var(--font-display);background:var(--bg-primary);color:var(--text-primary);transition:background .3s,color .3s;line-height:1.5;min-height:100vh}
-
-/* ─── ENHANCED ANIMATIONS ─── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(0.8)}}
-@keyframes pulse-ring{0%{transform:scale(0.8);opacity:1}100%{transform:scale(2);opacity:0}}
-@keyframes slide-in{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
-@keyframes slide-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes countUp{from{opacity:0;transform:translateY(8px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes glow-pulse{0%,100%{box-shadow:0 0 8px rgba(14,165,233,0.2)}50%{box-shadow:0 0 24px rgba(14,165,233,0.6)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-@keyframes float-in{from{opacity:0;transform:translateY(30px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes orbit{0%{transform:rotate(0deg) translateX(60px) rotate(0deg)}100%{transform:rotate(360deg) translateX(60px) rotate(-360deg)}}
-@keyframes progress-glow{0%{box-shadow:0 0 4px var(--green)}50%{box-shadow:0 0 16px var(--green)}100%{box-shadow:0 0 4px var(--green)}}
-@keyframes bar-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-@keyframes number-pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
-@keyframes card-shine{0%{left:-100%}100%{left:200%}}
-@keyframes gradient-border{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes ripple{0%{transform:scale(0);opacity:.5}100%{transform:scale(4);opacity:0}}
-@keyframes particle-float{0%{opacity:0;transform:translateY(0) translateX(0)}20%{opacity:.7}80%{opacity:.7}100%{opacity:0;transform:translateY(-100px) translateX(30px)}}
-@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes bounce-subtle{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@keyframes skeleton-loading{0%{background-position:-200% 0}100%{background-position:200% 0}}
-
-.fade-up{animation:fadeUp .6s cubic-bezier(.22,1,.36,1) both}
-.fade-in{animation:fadeIn .4s ease-out both}
-.slide-in{animation:slide-in .4s ease-out both}
-.slide-up{animation:slide-up .3s ease-out both}
-.float-in{animation:float-in .7s cubic-bezier(.22,1,.36,1) both}
-
-/* Stagger delays */
-.stagger-1{animation-delay:.05s}.stagger-2{animation-delay:.1s}.stagger-3{animation-delay:.15s}
-.stagger-4{animation-delay:.2s}.stagger-5{animation-delay:.25s}.stagger-6{animation-delay:.3s}
-.stagger-7{animation-delay:.35s}.stagger-8{animation-delay:.4s}
-
-/* Skeleton loader */
-.skeleton{background:linear-gradient(90deg,var(--bg-secondary) 25%,var(--border) 50%,var(--bg-secondary) 75%);background-size:200% 100%;animation:skeleton-loading 1.5s infinite;border-radius:4px}
-
-/* Status indicators */
-.status-pulse{position:relative}
-.status-pulse::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);animation:pulse-ring 2s cubic-bezier(0,.55,.45,1) infinite}
-
-/* Live indicator */
-.live-indicator{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--green);font-weight:600}
-.live-indicator::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse-dot 1.5s infinite}
-
-/* ─── LOGIN ─── */
-.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg-primary);position:relative;overflow:hidden}
-.login-wrap::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent-dim),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:glow-pulse 4s ease-in-out infinite;pointer-events:none}
-.login-wrap::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;border:1px solid var(--border);top:20%;right:10%;animation:spin-slow 20s linear infinite;pointer-events:none;opacity:.3}
-.login-box{width:100%;max-width:400px;animation:float-in .7s cubic-bezier(.22,1,.36,1);position:relative;z-index:1}
-.login-logo{font-family:var(--font-mono);font-size:42px;font-weight:700;letter-spacing:-2px;text-align:center;margin-bottom:4px;background:linear-gradient(135deg,var(--accent),var(--purple),var(--green));background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-border 6s ease infinite}
-.login-sub{text-align:center;color:var(--text-muted);font-size:13px;margin-bottom:32px;font-family:var(--font-mono)}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.form-input{width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text-primary);transition:border .2s,box-shadow .2s;outline:none}
-.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-dim)}
-textarea.form-input{min-height:80px;resize:vertical;font-family:var(--font-display);line-height:1.5}
-.btn{width:100%;padding:12px;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
-.btn-primary{background:var(--text-primary);color:var(--bg-primary);position:relative;overflow:hidden}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:var(--shadow-lg)}
-.btn-primary:active{transform:translateY(0)}
-.error-msg{color:var(--red);font-size:12px;margin-top:8px;text-align:center}
-
-/* ─── LAYOUT ─── */
+:root{--bg:#0f0f1a;--card:#1a1a2e;--text:#fff;--muted:#a0a0b0;--accent:#0ea5e9;--green:#22c55e;--amber:#f59e0b;--purple:#a855f7}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);margin:0;min-height:100vh}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 100%)}
+.login-box{background:var(--card);padding:40px;border-radius:16px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login h1{margin:0 0 8px;font-size:32px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login p{color:var(--muted);margin:0 0 24px;font-size:14px}
+input{width:100%;padding:12px 16px;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px;box-sizing:border-box}
+input:focus{outline:none;border-color:var(--accent)}
+button{cursor:pointer;border:none;font-family:inherit}
+.btn-primary{width:100%;padding:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:14px}
+.btn-primary:hover{opacity:.9}
 .app{display:flex;min-height:100vh}
-.sidebar{width:260px;background:var(--bg-card);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;transition:transform .3s}
-.sidebar-logo{font-family:var(--font-mono);font-size:24px;font-weight:700;padding:0 20px;margin-bottom:8px;letter-spacing:-1px;display:flex;align-items:center;gap:10px}
-.sidebar-logo .dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite;position:relative}
-.sidebar-logo .dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);animation:pulse-ring 2s infinite}
-.nav-section{margin-bottom:20px}
-.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);padding:0 20px;margin-bottom:8px;font-weight:600}
-.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;border-left:3px solid transparent;margin:2px 0}
-.nav-item:hover{color:var(--text-primary);background:var(--bg-secondary)}
-.nav-item.active{color:var(--text-primary);background:var(--accent-dim);border-left-color:var(--accent);font-weight:600}
-.nav-item svg{width:18px;height:18px;flex-shrink:0;transition:transform .2s}
-.nav-item:hover svg{transform:scale(1.1)}
-.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
-.theme-toggle{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-muted);cursor:pointer;padding:8px 0;transition:color .2s}
-.theme-toggle:hover{color:var(--text-primary)}
-.toggle-track{width:40px;height:22px;border-radius:11px;background:var(--border);position:relative;transition:background .2s}
-.toggle-track.on{background:var(--accent)}
-.toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
-.toggle-track.on .toggle-thumb{transform:translateX(18px)}
-.user-info{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
-.user-name{font-size:13px;font-weight:600}.user-role{font-size:11px;color:var(--text-muted)}
-.logout-btn{margin-left:auto;font-size:11px;color:var(--text-muted);cursor:pointer;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:none;transition:all .2s}
-.logout-btn:hover{color:var(--red);border-color:var(--red)}
-
-/* ─── CLOCK WIDGET ─── */
-.clock-widget{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:16px;font-family:var(--font-mono)}
-.clock-main{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.clock-day{font-size:11px;color:var(--accent);font-weight:700}
-.clock-time{font-size:16px;color:var(--text-primary);font-weight:700;letter-spacing:1px}
-.clock-date{font-size:11px;color:var(--text-muted)}
-
-/* ─── MAIN ─── */
-.main{margin-left:260px;flex:1;padding:32px 40px;max-width:1400px}
-.page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start}
-.page-title{font-size:28px;font-weight:700;letter-spacing:-1px}
-.page-subtitle{font-size:14px;color:var(--text-muted);margin-top:4px}
-.refresh-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-card);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all .2s}
-.refresh-btn:hover{border-color:var(--accent);color:var(--accent)}
-.refresh-btn.spinning svg{animation:spin-slow 1s linear infinite}
-
-/* ─── CARDS ─── */
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:border-color .2s,box-shadow .2s,transform .2s;position:relative;overflow:hidden}
-.card:hover{border-color:var(--border-focus);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
-.card::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);animation:card-shine 5s ease-in-out infinite;pointer-events:none}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.card-title{font-size:15px;font-weight:700;letter-spacing:-.3px}
-.card-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
-
-/* ─── GRIDS ─── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-@media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.main{padding:24px}}
-
-/* ─── STAT CARDS ─── */
-.stat-card{text-align:center;padding:24px 20px;position:relative;overflow:hidden}
-.stat-card:hover{transform:translateY(-4px)}
-.stat-ring{position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;border-radius:50%;border:2px solid var(--border);opacity:.1}
-.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;transition:transform .3s}
-.stat-card:hover .stat-icon{transform:scale(1.1) rotate(-5deg)}
-.stat-value{font-size:36px;font-weight:800;font-family:var(--font-mono);letter-spacing:-1px;animation:countUp .8s cubic-bezier(.22,1,.36,1) both}
-.stat-label{font-size:11px;color:var(--text-muted);margin-top:6px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
-.stat-delta{font-size:11px;margin-top:6px;font-weight:700;font-family:var(--font-mono)}
-
-/* ─── AGENT CARDS ─── */
-.agent-card{display:flex;align-items:flex-start;gap:16px;padding:20px;position:relative;overflow:hidden}
-.agent-card:hover{transform:translateY(-3px)}
-.agent-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0;font-family:var(--font-mono);transition:all .3s;position:relative}
-.agent-card:hover .agent-icon{transform:scale(1.08) rotate(3deg)}
-.agent-name{font-size:15px;font-weight:700}
-.agent-role{font-size:12px;color:var(--text-muted);margin-top:2px}
-.agent-meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.agent-tag{font-size:10px;padding:3px 10px;border-radius:12px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border);transition:all .15s;font-weight:600}
-.agent-tag:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;position:relative}
-.status-dot.online{background:var(--green);box-shadow:0 0 8px var(--green)}
-.status-dot.online::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--green);animation:pulse-ring 2s infinite}
-.status-dot.idle{background:var(--amber);box-shadow:0 0 6px var(--amber)}
-.status-dot.offline{background:var(--text-muted)}
-.agent-commits{font-family:var(--font-mono);font-size:14px;color:var(--text-muted);font-weight:600}
-
-/* ─── PROJECT CARDS ─── */
-.project-card{padding:20px}
-.project-title{font-size:15px;font-weight:700;margin-bottom:6px}
-.project-desc{font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6}
-.project-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
-.project-links{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.project-link{font-size:12px;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;transition:all .15s;font-weight:500}
-.project-link:hover{border-color:var(--accent);background:var(--accent-dim);transform:translateY(-2px)}
-.progress-bar{width:100%;height:6px;background:var(--bg-secondary);border-radius:3px;margin-top:16px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.22,1,.36,1);position:relative}
-.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite}
-.progress-fill.active{animation:progress-glow 2s ease-in-out infinite}
-
-/* ─── ACTIVITY FEED ─── */
-.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;transition:all .15s}
-.activity-item:last-child{border-bottom:none}
-.activity-item:hover{background:var(--bg-secondary);border-radius:8px;padding-left:12px;padding-right:12px;margin:0 -12px}
-.activity-time{color:var(--text-muted);font-family:var(--font-mono);min-width:60px;font-size:11px;font-weight:500}
-.activity-agent{font-weight:700;min-width:60px;font-family:var(--font-mono);font-size:11px}
-.activity-msg{color:var(--text-secondary);flex:1;line-height:1.5}
-.activity-type{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-
-/* ─── COMMIT ITEMS ─── */
-.commit-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);font-size:13px;transition:all .15s;animation:slide-up .3s ease-out both}
-.commit-item:last-child{border-bottom:none}
-.commit-item:hover{background:var(--bg-secondary);border-radius:8px;padding-left:12px;padding-right:12px;margin:0 -12px}
-.commit-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--font-mono);flex-shrink:0;color:#fff}
+.sidebar{width:240px;background:var(--card);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;padding:0 20px 20px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;color:var(--muted);cursor:pointer;font-size:14px}
+.nav-item:hover,.nav-item.active{color:var(--text);background:rgba(14,165,233,.1)}
+.main{margin-left:240px;flex:1;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.header h1{margin:0;font-size:24px}
+.header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.time-selector{display:flex;gap:4px;background:#0f0f1a;padding:4px;border-radius:8px;border:1px solid #2a2a3e}
+.time-btn{padding:8px 14px;border-radius:6px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;border:none;font-family:'JetBrains Mono',monospace}
+.time-btn.active{background:var(--accent);color:#fff}
+.update-btn{padding:10px 18px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px}
+.update-btn:disabled{opacity:.5;cursor:not-allowed}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.card{background:var(--card);padding:20px;border-radius:12px;border:1px solid #2a2a3e}
+.stat{text-align:center}
+.stat-value{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.chart-card{grid-column:span 2}
+.chart{height:200px}
+.commits{max-height:300px;overflow-y:auto}
+.commit{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #2a2a3e}
+.commit:last-child{border-bottom:none}
+.commit-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;font-family:'JetBrains Mono',monospace}
 .commit-content{flex:1;min-width:0}
-.commit-message{font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.commit-meta{display:flex;gap:12px;font-size:11px;color:var(--text-muted)}
-.commit-sha{font-family:var(--font-mono);color:var(--accent)}
-
-/* ─── CHART ─── */
-.chart-wrap{position:relative;height:260px;margin-top:16px}
-
-/* ─── TOAST ─── */
-.toast{position:fixed;bottom:24px;right:24px;padding:14px 24px;border-radius:var(--radius);font-size:14px;font-weight:600;z-index:200;animation:slide-in .4s ease-out;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px}
-.toast.success{background:var(--green);color:#fff}
-.toast.error{background:var(--red);color:#fff}
-.toast.info{background:var(--accent);color:#fff}
-.toast-icon{width:20px;height:20px}
-
-/* ─── LOADING STATES ─── */
-.loading-overlay{position:fixed;inset:0;background:var(--bg-primary);display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:20px}
-.loading-spinner{width:50px;height:50px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin-slow 1s linear infinite}
-.loading-text{color:var(--text-muted);font-size:14px;font-family:var(--font-mono)}
-
-/* ─── SCROLLBAR ─── */
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+.commit-msg{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.commit-meta{display:flex;gap:12px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.repo-badge{padding:2px 6px;background:#2a2a3e;border-radius:4px;font-size:11px}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:16px}
+.toast{position:fixed;bottom:24px;right:24px;padding:16px 20px;background:var(--card);border-radius:8px;border:1px solid #2a2a3e;box-shadow:0 10px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid #ef4444}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}}
+.agent{display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
+.agent-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.agent-info{flex:1}
+.agent-name{font-weight:600;margin-bottom:2px}
+.agent-role{font-size:13px;color:var(--muted)}
+.agent-meta{display:flex;gap:8px;margin-top:6px}
+.tag{font-size:11px;padding:3px 8px;background:#0f0f1a;border-radius:12px}
+.status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.project{padding:20px;margin-bottom:16px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
+.project-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.project-title{font-weight:600;font-size:16px}
+.project-desc{font-size:14px;color:var(--muted);margin-bottom:12px}
+.progress{height:6px;background:#0f0f1a;border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s ease}
 </style>
 </head>
 <body>
@@ -243,472 +81,209 @@ textarea.form-input{min-height:80px;resize:vertical;font-family:var(--font-displ
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-// ─── CONFIG ────────────────────────────────────────────────────
-const GITHUB_USER = 'REMgm';
-const GITHUB_REPOS = ['8NTIC', '8NTICDASH', '8NTICLAB', 'gratisgast', 'REMCLAW', 'SMARTY', 'sndy', 'startwithopenclaw', 'sundai-motivation'];
-const GENESIS_DATE = new Date('2026-03-06T00:08:00Z');
-const REFRESH_INTERVAL = 60000; // 60 seconds
-
-// ─── AGENT CONFIG ───────────────────────────────────────────────
-const AGENT_CONFIG = {
-  REM: { color: '#0ea5e9', icon: 'R', role: 'admin', type: 'human', platform: 'Human' },
-  SMARTY: { color: '#22c55e', icon: 'S', role: 'write', type: 'autonomous', platform: 'MacMini M2' },
-  KIMI: { color: '#f59e0b', icon: 'K', role: 'write', type: 'autonomous', platform: 'OpenClaw Main' },
-  UMBREL: { color: '#a855f7', icon: 'U', role: 'write', type: 'autonomous', platform: 'OpenClaw Linux' },
-  CLAUDE: { color: '#38bdf8', icon: 'C', role: 'read_write_drafts', type: 'external', platform: 'Anthropic API' },
-  GEMINI: { color: '#f472b6', icon: 'G', role: 'read_only', type: 'external', platform: 'Google AI' },
-  PERPLEXITY: { color: '#fb923c', icon: 'P', role: 'read_only', type: 'external', platform: 'Perplexity AI' },
+const AGENTS = {
+  REM: { color: '#0ea5e9', icon: 'R' },
+  SMARTY: { color: '#22c55e', icon: 'S' },
+  KIMI: { color: '#f59e0b', icon: 'K' },
+  UMBREL: { color: '#a855f7', icon: 'U' },
+  CLAUDE: { color: '#38bdf8', icon: 'C' },
+  GEMINI: { color: '#f472b6', icon: 'G' },
+  PERPLEXITY: { color: '#fb923c', icon: 'P' },
 };
 
-// ─── UTILITIES ──────────────────────────────────────────────────
-function getDayNumber() {
-  const now = new Date();
-  const diff = Math.floor((now - GENESIS_DATE) / (1000*60*60*24));
-  return Math.max(1, diff + 1);
-}
+const REPOS = ['8NTIC', '8NTICDASH', '8NTICLAB', 'startwithopenclaw', 'sundai-motivation'];
+const TIMES = [
+  { key: 'hour', label: '1H', ms: 60*60*1000 },
+  { key: 'day', label: '1D', ms: 24*60*60*1000 },
+  { key: 'week', label: '1W', ms: 7*24*60*60*1000 },
+  { key: 'month', label: '1M', ms: 30*24*60*60*1000 },
+];
 
-function formatTime(d = new Date()) {
-  return d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
-}
-
-function formatDate(d = new Date()) {
-  return d.toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric', year:'numeric' });
-}
-
-function formatRelativeTime(dateString) {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
-  return `${Math.floor(diff/86400)}d ago`;
-}
-
-function useLiveClock(interval = 1000) {
-  const [now, setNow] = useState(new Date());
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), interval);
-    return () => clearInterval(id);
-  }, [interval]);
-  return now;
-}
-
-// ─── ANIMATED NUMBER ────────────────────────────────────────────
-function AnimatedNumber({ value, duration = 800, prefix = '', suffix = '' }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const target = typeof value === 'number' ? value : parseInt(value) || 0;
-    const start = performance.now();
-    const animate = (now) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(eased * target));
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [value, duration]);
-  return <span>{prefix}{display}{suffix}</span>;
-}
-
-// ─── TOAST COMPONENT ───────────────────────────────────────────
-function Toast({ message, type, onClose }) {
-  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
-  const icons = {
-    success: '✓', error: '✗', info: 'ℹ'
-  };
-  return (
-    <div className={`toast ${type}`}>
-      <span className="toast-icon">{icons[type]}</span>
-      {message}
-    </div>
-  );
-}
-
-// ─── AUTH STORE ─────────────────────────────────────────────────
-const DEFAULT_USERS = [{ email: '4remgm@gmail.com', password: 'Letmeinn0w4321@!', role: 'admin', name: 'REM' }];
-function loadUsers() {
-  try { return JSON.parse(localStorage.getItem('8ntic_users')) || DEFAULT_USERS; } catch { return DEFAULT_USERS; }
-}
-
-// ─── ICONS ──────────────────────────────────────────────────────
-const Icons = {
-  dashboard: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
-  agents: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>,
-  projects: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
-  cron: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>,
-  activity: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  github: () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.09.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>,
-  external: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
-  refresh: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>,
-  sun: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>,
-  moon: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
-};
-
-// ─── SIDEBAR CLOCK ─────────────────────────────────────────────
-function SidebarClock() {
-  const now = useLiveClock(1000);
-  return (
-    <div className="clock-widget">
-      <div className="clock-main">
-        <span className="clock-day">Day {getDayNumber()}</span>
-        <span className="clock-time">{formatTime(now)}</span>
-      </div>
-      <div className="clock-date">{formatDate(now)}</div>
-    </div>
-  );
-}
-
-// ─── LOGIN PAGE ─────────────────────────────────────────────────
-function LoginPage({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const users = loadUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      localStorage.setItem('8ntic_session', JSON.stringify({ email: user.email, name: user.name, role: user.role }));
-      onLogin(user);
-    } else {
-      setError('Invalid credentials');
-    }
-  };
-
-  return (
-    <div className="login-wrap">
-      <div className="login-box">
-        <div className="login-logo">8NTIC</div>
-        <div className="login-sub">Autonomous AI Agency — Control Center</div>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" className="form-input" value={email} onChange={e => setEmail(e.target.value)} placeholder="agent@8ntic.dev" required />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" className="form-input" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
-          </div>
-          {error && <div className="error-msg">{error}</div>}
-          <button type="submit" className="btn btn-primary">Enter Control Center</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ─── DASHBOARD PAGE ────────────────────────────────────────────
-function DashboardPage({ commits, loading, onRefresh }) {
-  const chartRef = useRef(null);
-  const chartInstance = useRef(null);
+function App() {
+  const [user, setUser] = useState(() => {
+    const s = localStorage.getItem('8ntic_session');
+    return s ? JSON.parse(s) : null;
+  });
+  const [page, setPage] = useState('dashboard');
+  const [commits, setCommits] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [timeFrame, setTimeFrame] = useState('day');
   const [toast, setToast] = useState(null);
-  const [timeFrame, setTimeFrame] = useState('day'); // hour, day, week, month
+  const chartRef = useRef(null);
 
-  // Time frame options
-  const timeFrameOptions = [
-    { value: 'hour', label: '1 Hour', ms: 60 * 60 * 1000 },
-    { value: 'day', label: '1 Day', ms: 24 * 60 * 60 * 1000 },
-    { value: 'week', label: '1 Week', ms: 7 * 24 * 60 * 60 * 1000 },
-    { value: 'month', label: '1 Month', ms: 30 * 24 * 60 * 60 * 1000 },
-  ];
+  const fetchData = useCallback(async (showToast = false) => {
+    setLoading(true);
+    try {
+      const all = [];
+      for (const repo of REPOS) {
+        try {
+          const res = await fetch(`https://api.github.com/repos/REMgm/${repo}/commits?per_page=30`);
+          if (res.ok) {
+            const data = await res.json();
+            all.push(...data.map(c => ({...c, repo})));
+          }
+        } catch (e) {}
+      }
+      all.sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date));
+      setCommits(all);
+      if (showToast) setToast({ msg: `Loaded ${all.length} commits`, type: 'success' });
+    } catch (e) {
+      setToast({ msg: 'Failed to load data', type: 'error' });
+    }
+    setLoading(false);
+  }, []);
 
-  // Filter commits based on time frame
-  const filteredCommits = useMemo(() => {
-    const now = new Date();
-    const selectedOption = timeFrameOptions.find(t => t.value === timeFrame);
-    const cutoffTime = new Date(now.getTime() - selectedOption.ms);
-    
-    return commits.filter(c => new Date(c.commit.author.date) >= cutoffTime);
+  useEffect(() => {
+    if (user) fetchData();
+  }, [user]);
+
+  const filtered = useMemo(() => {
+    const t = TIMES.find(x => x.key === timeFrame).ms;
+    const cutoff = Date.now() - t;
+    return commits.filter(c => new Date(c.commit.author.date).getTime() > cutoff);
   }, [commits, timeFrame]);
 
-  // Process filtered commits for display
-  const recentCommits = useMemo(() => {
-    return filteredCommits.slice(0, 10).map(commit => {
-      const author = commit.commit.author.name;
-      const agentKey = Object.keys(AGENT_CONFIG).find(k => 
-        author.toLowerCase().includes(k.toLowerCase()) || 
-        commit.author?.login?.toLowerCase().includes(k.toLowerCase())
-      ) || 'REM';
-      return {
-        ...commit,
-        agentKey,
-        agentConfig: AGENT_CONFIG[agentKey] || AGENT_CONFIG.REM,
-        time: formatRelativeTime(commit.commit.author.date),
-      };
-    });
-  }, [filteredCommits]);
-
-  // Calculate stats based on filtered commits
   const stats = useMemo(() => {
-    const agentCommits = {};
-    filteredCommits.forEach(c => {
-      const author = c.commit.author.name;
-      const key = Object.keys(AGENT_CONFIG).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
-      agentCommits[key] = (agentCommits[key] || 0) + 1;
+    const byAgent = {};
+    filtered.forEach(c => {
+      const name = c.commit.author.name;
+      const key = Object.keys(AGENTS).find(k => name.toLowerCase().includes(k.toLowerCase())) || 'REM';
+      byAgent[key] = (byAgent[key] || 0) + 1;
     });
-    return {
-      total: filteredCommits.length,
-      online: 4, // KIMI, SMARTY, UMBREL, REM
-      activeMissions: 1,
-      revenue: '$10',
-      agentCommits,
-    };
-  }, [filteredCommits]);
+    return { total: filtered.length, byAgent };
+  }, [filtered]);
 
-  // Initialize chart
-  useEffect(() => {
-    if (!chartRef.current || loading) return;
-    const ctx = chartRef.current.getContext('2d');
-    if (chartInstance.current) chartInstance.current.destroy();
-    
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-    const tickColor = isDark ? '#78716c' : '#a8a29e';
-    
-    // Group commits by hour and repo (using filtered commits)
-    const hourData8NTIC = {};
-    const hourDataDASH = {};
-    filteredCommits.forEach(c => {
-      const hour = new Date(c.commit.author.date).getHours();
-      const key = `${hour.toString().padStart(2,'0')}:00`;
-      if (c.repoSource === '8NTICDASH') {
-        hourDataDASH[key] = (hourDataDASH[key] || 0) + 1;
-      } else {
-        hourData8NTIC[key] = (hourData8NTIC[key] || 0) + 1;
-      }
-    });
-    const allHours = [...new Set([...Object.keys(hourData8NTIC), ...Object.keys(hourDataDASH)])].sort();
-    const data8NTIC = allHours.map(l => hourData8NTIC[l] || 0);
-    const dataDASH = allHours.map(l => hourDataDASH[l] || 0);
-
-    chartInstance.current = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: allHours,
-        datasets: [
-          {
-            label: '8NTIC',
-            data: data8NTIC,
-            backgroundColor: '#0ea5e9',
-            borderRadius: 6,
-            barPercentage: 0.6,
-          },
-          {
-            label: 'DASH',
-            data: dataDASH,
-            backgroundColor: '#a855f7',
-            borderRadius: 6,
-            barPercentage: 0.6,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 1000, easing: 'easeOutQuart' },
-        plugins: { 
-          legend: { 
-            display: true,
-            position: 'bottom', 
-            labels: { 
-              boxWidth: 10, 
-              padding: 14, 
-              font: { size: 11, family: 'Space Grotesk' }, 
-              color: tickColor 
-            } 
-          } 
-        },
-        scales: {
-          x: { 
-            stacked: true, 
-            grid: { display: false }, 
-            ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor } 
-          },
-          y: { 
-            stacked: true, 
-            grid: { color: gridColor }, 
-            ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor, stepSize: 1 }, 
-            beginAtZero: true 
-          }
-        }
-      }
-    });
-    return () => { if(chartInstance.current) chartInstance.current.destroy(); };
-  }, [filteredCommits, loading]);
+  if (!user) return <Login onLogin={u => { setUser(u); localStorage.setItem('8ntic_session', JSON.stringify(u)); }} />;
 
   return (
+    <div className="app">
+      <Sidebar page={page} setPage={setPage} user={user} onLogout={() => { localStorage.removeItem('8ntic_session'); setUser(null); }} />
+      <main className="main">
+        {page === 'dashboard' && <Dashboard 
+          commits={filtered} 
+          stats={stats} 
+          timeFrame={timeFrame} 
+          setTimeFrame={setTimeFrame}
+          loading={loading}
+          onUpdate={() => fetchData(true)}
+          chartRef={chartRef}
+        />}
+        {page === 'agents' && <Agents commits={commits} />}
+        {page === 'missions' && <Missions />}
+        {toast && <Toast {...toast} onClose={() => setToast(null)} />}
+      </main>
+    </div>
+  );
+}
+
+function Login({ onLogin }) {
+  const [email, setEmail] = useState('');
+  const [pass, setPass] = useState('');
+  const login = () => {
+    if (email === '4remgm@gmail.com' && pass === 'Letmeinn0w4321@!') {
+      onLogin({ email, name: 'REM', role: 'admin' });
+    }
+  };
+  return (
+    <div className="login">
+      <div className="login-box">
+        <h1>8NTIC</h1>
+        <p>Control Center</p>
+        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+        <input type="password" placeholder="Password" value={pass} onChange={e => setPass(e.target.value)} />
+        <button className="btn-primary" onClick={login}>Enter</button>
+      </div>
+    </div>
+  );
+}
+
+function Sidebar({ page, setPage, user, onLogout }) {
+  const items = [
+    { id: 'dashboard', label: 'Dashboard', icon: '◆' },
+    { id: 'agents', label: 'Agents', icon: '●' },
+    { id: 'missions', label: 'Missions', icon: '▲' },
+  ];
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-logo"><span className="dot"></span>8NTIC</div>
+      <nav>
+        {items.map(i => (
+          <div key={i.id} className={`nav-item ${page === i.id ? 'active' : ''}`} onClick={() => setPage(i.id)}>
+            <span>{i.icon}</span> {i.label}
+          </div>
+        ))}
+      </nav>
+      <div style={{marginTop:'auto',padding:'20px',borderTop:'1px solid #2a2a3e'}}>
+        <div style={{fontSize:13,fontWeight:600}}>{user.name}</div>
+        <div style={{fontSize:12,color:'var(--muted)'}}>{user.role}</div>
+        <button onClick={onLogout} style={{marginTop:12,padding:'8px 12px',background:'transparent',color:'var(--muted)',border:'1px solid #2a2a3e',borderRadius:6,cursor:'pointer',fontSize:12}}>Exit</button>
+      </div>
+    </aside>
+  );
+}
+
+function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate, chartRef }) {
+  return (
     <div>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
-      <div className="page-header fade-up">
+      <div className="header">
         <div>
-          <div className="page-title">Dashboard</div>
-          <div className="page-subtitle">8NTIC Reflective Agent Mesh — Day {getDayNumber()} • Checking {GITHUB_REPOS.length} repos</div>
+          <h1>Dashboard</h1>
+          <p>8NTIC Reflective Agent Mesh • {commits.length} commits loaded</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {/* Time Frame Selector */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 4, 
-            background: 'var(--bg-secondary)', 
-            padding: '4px', 
-            borderRadius: '8px', 
-            border: '2px solid var(--border)',
-            boxShadow: 'var(--shadow)'
-          }}>
-            {timeFrameOptions.map(option => (
-              <button
-                key={option.value}
-                onClick={() => setTimeFrame(option.value)}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: timeFrame === option.value ? 'var(--accent)' : 'transparent',
-                  color: timeFrame === option.value ? '#fff' : 'var(--text-secondary)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  fontFamily: 'var(--font-mono)',
-                  boxShadow: timeFrame === option.value ? '0 2px 8px rgba(14,165,233,0.4)' : 'none',
-                }}
-              >
-                {option.label}
+        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <div className="time-selector">
+            {TIMES.map(t => (
+              <button key={t.key} className={`time-btn ${timeFrame === t.key ? 'active' : ''}`} onClick={() => setTimeFrame(t.key)}>
+                {t.label}
               </button>
             ))}
-          </div>          
-          <button 
-            className={`refresh-btn ${loading ? 'spinning' : ''}`} 
-            onClick={() => onRefresh(true)} 
-            disabled={loading}
-            style={{ 
-              background: loading ? 'var(--bg-secondary)' : 'var(--accent)', 
-              color: loading ? 'var(--text-muted)' : '#fff',
-              border: '2px solid var(--accent)',
-              fontWeight: 700,
-              padding: '10px 18px',
-              borderRadius: '8px',
-              fontSize: '13px'
-            }}
-          >
-            <Icons.refresh /> {loading ? 'Updating...' : 'Update'}
+          </div>
+          <button className="update-btn" onClick={onUpdate} disabled={loading}>
+            <span className={loading ? 'spin' : ''}>↻</span> {loading ? 'Loading...' : 'Update'}
           </button>
         </div>
       </div>
-
-      <div className="grid-4 fade-up stagger-1" style={{ marginBottom: 24 }}>
-        <div className="card stat-card">
-          <div className="stat-ring"></div>
-          <div className="stat-icon" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>🟢</div>
-          <div className="stat-value" style={{ color: 'var(--accent)' }}>
-            <AnimatedNumber value={stats.online} />/{Object.keys(AGENT_CONFIG).length}
+      
+      <div className="grid">
+        <Card><Stat value={Object.keys(AGENTS).length} label="Agents" color="var(--accent)" /></Card>
+        <Card><Stat value={stats.total} label="Commits" color="var(--green)" /></Card>
+        <Card><Stat value={3} label="Missions" color="var(--amber)" /></Card>
+        <Card><Stat value="$10" label="Revenue" color="var(--purple)" /></Card>
+        
+        <div className="card chart-card">
+          <div style={{fontWeight:600,marginBottom:12}}>Activity</div>
+          <div ref={chartRef} className="chart">
+            <Chart commits={commits} />
           </div>
-          <div className="stat-label">Agents Online</div>
-          <div className="stat-delta" style={{ color: 'var(--green)' }}>↑ Live</div>
         </div>
-        <div className="card stat-card">
-          <div className="stat-ring"></div>
-          <div className="stat-icon" style={{ background: 'var(--green-dim)', color: 'var(--green)' }}>📊</div>
-          <div className="stat-value" style={{ color: 'var(--green)' }}>
-            <AnimatedNumber value={stats.total} />
-          </div>
-          <div className="stat-label">Total Commits</div>
-          <div className="stat-delta" style={{ color: 'var(--text-muted)' }}>Last {timeFrameOptions.find(t => t.value === timeFrame)?.label.toLowerCase()}</div>
-        </div>
-        <div className="card stat-card">
-          <div className="stat-ring"></div>
-          <div className="stat-icon" style={{ background: 'var(--amber-dim)', color: 'var(--amber)' }}>🚀</div>
-          <div className="stat-value" style={{ color: 'var(--amber)' }}>
-            <AnimatedNumber value={stats.activeMissions} />
-          </div>
-          <div className="stat-label">Active Missions</div>
-          <div className="stat-delta" style={{ color: 'var(--amber)' }}>In progress</div>
-        </div>
-        <div className="card stat-card">
-          <div className="stat-ring"></div>
-          <div className="stat-icon" style={{ background: 'var(--purple-dim)', color: 'var(--purple)' }}>💎</div>
-          <div className="stat-value" style={{ color: 'var(--purple)' }}>{stats.revenue}</div>
-          <div className="stat-label">First Product</div>
-          <div className="stat-delta" style={{ color: 'var(--green)' }}>Live</div>
-        </div>
-      </div>
-
-      <div className="grid-2" style={{ marginBottom: 24 }}>
-        <div className="card fade-up stagger-2">
-          <div className="card-header">
-            <div className="card-title">Commit Activity — Last {timeFrameOptions.find(t => t.value === timeFrame)?.label}</div>
-            <span className="live-indicator">Live</span>
-          </div>
-          {loading ? (
-            <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div className="loading-spinner"></div>
-            </div>
-          ) : (
-            <div className="chart-wrap"><canvas ref={chartRef} /></div>
-          )}
-        </div>
-        <div className="card fade-up stagger-3">
-          <div className="card-header">
-            <div className="card-title">Recent Commits</div>
-            <span className="live-indicator">Live</span>
-          </div>
-          <div style={{ maxHeight: 260, overflowY: 'auto' }}>
-            {loading ? (
-              Array(5).fill(0).map((_, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, padding: 14, borderBottom: '1px solid var(--border)' }}>
-                  <div className="skeleton" style={{ width: 32, height: 32, borderRadius: '50%' }}></div>
-                  <div style={{ flex: 1 }}>
-                    <div className="skeleton" style={{ width: '80%', height: 14, marginBottom: 8 }}></div>
-                    <div className="skeleton" style={{ width: '50%', height: 10 }}></div>
-                  </div>
-                </div>
-              ))
-            ) : recentCommits.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center' }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
-                <div style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 8 }}>No commits found</div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
-                  Try selecting a different time frame or click Update to fetch latest data.
-                </div>
-                <button 
-                  onClick={() => onRefresh(true)}
-                  style={{ 
-                    marginTop: 16, 
-                    padding: '8px 16px', 
-                    background: 'var(--accent)', 
-                    color: '#fff', 
-                    border: 'none', 
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: 600
-                  }}
-                >
-                  Fetch Data
-                </button>
+        
+        <div className="card chart-card">
+          <div style={{fontWeight:600,marginBottom:12}}>Recent Commits</div>
+          <div className="commits">
+            {commits.length === 0 ? (
+              <div className="empty">
+                <div className="empty-icon">📭</div>
+                <div>No commits in this time frame</div>
               </div>
-            ) : (
-              recentCommits.map((commit, i) => (
-                <div key={commit.sha} className="commit-item" style={{ animationDelay: `${i * 0.05}s` }}>
-                  <div className="commit-avatar" style={{ background: commit.agentConfig.color }}>
-                    {commit.agentConfig.icon}
-                  </div>
+            ) : commits.slice(0, 10).map(c => {
+              const author = c.commit.author.name;
+              const agent = Object.keys(AGENTS).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
+              const cfg = AGENTS[agent];
+              const time = new Date(c.commit.author.date).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+              return (
+                <div key={c.sha} className="commit">
+                  <div className="commit-avatar" style={{background:cfg.color,color:'#fff'}}>{cfg.icon}</div>
                   <div className="commit-content">
-                    <div className="commit-message">{commit.commit.message.split('\n')[0]}</div>
+                    <div className="commit-msg">{c.commit.message.split('\n')[0]}</div>
                     <div className="commit-meta">
-                      <span style={{ color: commit.agentConfig.color, fontWeight: 600 }}>{commit.agentKey}</span>
-                      <span className="commit-sha">{commit.sha.slice(0, 7)}</span>
-                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'var(--bg-secondary)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{commit.repoSource === '8NTICDASH' ? 'DASH' : '8NTIC'}</span>
-                      <span>{commit.time}</span>
+                      <span style={{color:cfg.color}}>{agent}</span>
+                      <span className="repo-badge">{c.repo}</span>
+                      <span>{time}</span>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -716,255 +291,110 @@ function DashboardPage({ commits, loading, onRefresh }) {
   );
 }
 
-// ─── AGENTS PAGE ────────────────────────────────────────────────
-function AgentsPage({ commits }) {
-  const agents = useMemo(() => {
-    // Count commits per agent
-    const commitCounts = {};
-    commits.forEach(c => {
-      const author = c.commit.author.name;
-      const key = Object.keys(AGENT_CONFIG).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
-      commitCounts[key] = (commitCounts[key] || 0) + 1;
-    });
+function Card({ children }) {
+  return <div className="card stat">{children}</div>;
+}
 
-    return Object.entries(AGENT_CONFIG).map(([id, config]) => ({
-      id,
-      ...config,
-      commits: commitCounts[id] || 0,
-      status: ['KIMI', 'SMARTY', 'UMBREL', 'REM'].includes(id) ? 'online' : 'idle',
-      lastSeen: id === 'REM' ? 'Active now' : id === 'KIMI' ? 'Active now' : '5 min ago',
-    }));
-  }, [commits]);
-
+function Stat({ value, label, color }) {
   return (
     <div>
-      <div className="page-header fade-up">
-        <div className="page-title">Agents</div>
-        <div className="page-subtitle">7 identities — Reflective Agent Mesh</div>
-      </div>
-      <div className="grid-2">
-        {agents.map((agent, i) => (
-          <div key={agent.id} className="card agent-card fade-up" style={{ animationDelay: `${i * 0.06}s` }}>
-            <div className="agent-icon" style={{ background: agent.color }}>
-              {agent.icon}
-              {agent.status === 'online' && <div className="status-pulse"></div>}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <div className="agent-name">{agent.id}</div>
-                <span className={`status-dot ${agent.status}`}></span>
-                <span style={{ fontSize: 11, color: agent.status === 'online' ? 'var(--green)' : 'var(--text-muted)', textTransform: 'capitalize' }}>{agent.status}</span>
-              </div>
-              <div className="agent-role">{agent.platform}</div>
-              <div className="agent-meta">
-                <span className="agent-tag" style={{ background: agent.color + '20', color: agent.color, borderColor: agent.color + '40' }}>{agent.role}</span>
-                <span className="agent-tag">{agent.type}</span>
-                <span className="agent-tag" style={{ fontFamily: 'var(--font-mono)' }}>{agent.commits} commits</span>
-              </div>
-            </div>
-            <div className="agent-commits" style={{ color: agent.color }}>
-              {agent.lastSeen}
-            </div>
-          </div>
-        ))}
-      </div>
+      <div className="stat-value" style={{color}}>{value}</div>
+      <div className="stat-label">{label}</div>
     </div>
   );
 }
 
-// ─── PROJECTS PAGE ──────────────────────────────────────────────
-function ProjectsPage() {
-  const projects = [
-    { id: 'mission-001', name: 'Genesis Ping', status: 'completed', progress: 100, desc: 'Communication protocol test — all 3 autonomous agents confirmed operational.', agents: ['REM', 'KIMI', 'SMARTY', 'UMBREL'], repo: 'https://github.com/REMgm/8NTIC' },
-    { id: 'mission-002', name: 'OpenClaw QuickStart', status: 'active', progress: 75, desc: '$10 setup service — automated installer, landing page + Stripe payment. 24hr MVP.', agents: ['REM', 'SMARTY', 'KIMI', 'UMBREL'], repo: 'https://github.com/REMgm/8NTIC', live: 'https://8-nticlab.vercel.app' },
-    { id: 'mission-003', name: '8NTIC Dashboard', status: 'active', progress: 60, desc: 'Real-time control center with GitHub integration, agent monitoring, and mission tracking.', agents: ['KIMI', 'SMARTY'], repo: 'https://github.com/REMgm/8NTICDASH', live: 'https://8nticdash.vercel.app' },
-  ];
+function Chart({ commits }) {
+  const canvasRef = useRef(null);
+  const chartRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext('2d');
+    
+    if (chartRef.current) chartRef.current.destroy();
+    
+    const byHour = {};
+    commits.forEach(c => {
+      const h = new Date(c.commit.author.date).getHours();
+      byHour[h] = (byHour[h] || 0) + 1;
+    });
+    
+    const labels = Object.keys(byHour).sort().map(h => `${h}:00`);
+    const data = Object.keys(byHour).sort().map(h => byHour[h]);
+    
+    chartRef.current = new ChartJS(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ data, backgroundColor: 'var(--accent)', borderRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#2a2a3e' } } } }
+    });
+    
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, [commits]);
+  
+  return <canvas ref={canvasRef} style={{width:'100%',height:'100%'}} />;
+}
 
-  const statusColors = {
-    completed: { bg: 'var(--green-dim)', color: 'var(--green)' },
-    active: { bg: 'var(--amber-dim)', color: 'var(--amber)' },
-  };
-
+function Agents({ commits }) {
+  const counts = {};
+  commits.forEach(c => {
+    const name = c.commit.author.name;
+    const key = Object.keys(AGENTS).find(k => name.toLowerCase().includes(k.toLowerCase())) || 'REM';
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  
   return (
     <div>
-      <div className="page-header fade-up">
-        <div className="page-title">Missions</div>
-        <div className="page-subtitle">{projects.filter(p => p.status === 'active').length} active, {projects.filter(p => p.status === 'completed').length} completed</div>
+      <div className="header">
+        <div><h1>Agents</h1><p style={{color:'var(--muted)'}}>7 identities in the mesh</p></div>
       </div>
-      {projects.map((p, i) => (
-        <div key={p.id} className="card project-card fade-up" style={{ marginBottom: 16, animationDelay: `${i * 0.08}s` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <div className="project-title">{p.name}</div>
-                <span className="project-status" style={{ background: statusColors[p.status].bg, color: statusColors[p.status].color }}>{p.status}</span>
-              </div>
-              <div className="project-desc">{p.desc}</div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
-                {p.agents.map(a => (
-                  <span key={a} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, background: AGENT_CONFIG[a]?.color + '20', color: AGENT_CONFIG[a]?.color, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{a}</span>
-                ))}
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 32, fontWeight: 800, color: statusColors[p.status].color }}>
-                <AnimatedNumber value={p.progress} suffix="%" />
-              </div>
+      {Object.entries(AGENTS).map(([id, cfg]) => (
+        <div key={id} className="agent">
+          <div className="agent-icon" style={{background:cfg.color,color:'#fff'}}>{cfg.icon}</div>
+          <div className="agent-info">
+            <div className="agent-name">{id}</div>
+            <div className="agent-role">Agent</div>
+            <div className="agent-meta">
+              <span className="tag">{counts[id] || 0} commits</span>
+              <span className="tag">online</span>
             </div>
           </div>
-          <div className="progress-bar">
-            <div className={`progress-fill ${p.status === 'active' ? 'active' : ''}`} style={{ width: `${p.progress}%`, background: statusColors[p.status].color }}></div>
-          </div>
-          <div className="project-links">
-            {p.repo && <a href={p.repo} target="_blank" rel="noopener" className="project-link"><Icons.github /> Repository</a>}
-            {p.live && <a href={p.live} target="_blank" rel="noopener" className="project-link"><Icons.external /> Live Site</a>}
-          </div>
+          <div className="status"></div>
         </div>
       ))}
     </div>
   );
 }
 
-// ─── MAIN APP ───────────────────────────────────────────────────
-function App() {
-  const [user, setUser] = useState(null);
-  const [page, setPage] = useState('dashboard');
-  const [dark, setDark] = useState(false);
-  const [commits, setCommits] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Check session on load
-  useEffect(() => {
-    const session = localStorage.getItem('8ntic_session');
-    if (session) setUser(JSON.parse(session));
-  }, []);
-
-  // Theme toggle
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  }, [dark]);
-
-  // Fetch GitHub commits from all REMgm repos
-  const fetchCommits = useCallback(async (showToast = false) => {
-    setLoading(true);
-    try {
-      const allCommits = [];
-      let successCount = 0;
-      let errorCount = 0;
-      
-      for (const repo of GITHUB_REPOS) {
-        try {
-          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${repo}/commits?per_page=20`);
-          if (res.ok) {
-            const data = await res.json();
-            const commitsWithRepo = data.map(c => ({...c, repoSource: repo}));
-            allCommits.push(...commitsWithRepo);
-            successCount++;
-          } else if (res.status === 403) {
-            // Rate limited
-            errorCount++;
-            console.warn(`Rate limited for ${repo}`);
-          } else {
-            errorCount++;
-          }
-        } catch (repoErr) {
-          console.warn(`Failed to fetch ${repo}:`, repoErr);
-          errorCount++;
-        }
-      }
-      
-      // Sort by date (newest first)
-      allCommits.sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date));
-      
-      setCommits(allCommits.slice(0, 50));
-      
-      if (showToast) {
-        if (errorCount > 0) {
-          setToast({ message: `Updated ${successCount} repos (${errorCount} rate limited)`, type: 'info' });
-        } else {
-          setToast({ message: `Updated from ${successCount} repositories`, type: 'success' });
-        }
-      }
-    } catch (err) {
-      console.error('Failed to fetch commits:', err);
-      setToast({ message: 'Failed to fetch updates. GitHub API rate limit may apply.', type: 'error' });
-    }
-    setLoading(false);
-  }, []);
-
-  // Initial fetch + polling
-  useEffect(() => {
-    if (user) {
-      fetchCommits();
-      const id = setInterval(fetchCommits, REFRESH_INTERVAL);
-      return () => clearInterval(id);
-    }
-  }, [user, fetchCommits]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('8ntic_session');
-    setUser(null);
-  };
-
-  if (!user) return <LoginPage onLogin={setUser} />;
-
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Icons.dashboard },
-    { id: 'agents', label: 'Agents', icon: Icons.agents },
-    { id: 'projects', label: 'Missions', icon: Icons.projects },
-    { id: 'activity', label: 'Activity', icon: Icons.activity },
+function Missions() {
+  const missions = [
+    { name: 'Genesis Ping', status: 'completed', progress: 100, desc: 'Communication protocol test' },
+    { name: 'OpenClaw QuickStart', status: 'active', progress: 75, desc: '$10 setup service' },
+    { name: '8NTIC Dashboard', status: 'active', progress: 90, desc: 'Real-time control center' },
   ];
-
-  const renderPage = () => {
-    switch (page) {
-      case 'dashboard': return <DashboardPage commits={commits} loading={loading} onRefresh={fetchCommits} />;
-      case 'agents': return <AgentsPage commits={commits} />;
-      case 'projects': return <ProjectsPage />;
-      case 'activity': return <DashboardPage commits={commits} loading={loading} onRefresh={fetchCommits} />;
-      default: return <DashboardPage commits={commits} loading={loading} onRefresh={fetchCommits} />;
-    }
-  };
-
+  
   return (
-    <div className="app">
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <span className="dot"></span>
-          8NTIC
-        </div>
-        
-        <SidebarClock />
-        
-        <nav>
-          {navItems.map(item => (
-            <div key={item.id} className={`nav-item ${page === item.id ? 'active' : ''}`} onClick={() => setPage(item.id)}>
-              <item.icon /> {item.label}
-            </div>
-          ))}
-        </nav>
-        
-        <div className="sidebar-footer">
-          <div className="theme-toggle" onClick={() => setDark(!dark)}>
-            {dark ? <Icons.sun /> : <Icons.moon />}
-            <span>{dark ? 'Light Mode' : 'Dark Mode'}</span>
-            <div className={`toggle-track ${dark ? 'on' : ''}`}><div className="toggle-thumb"></div></div>
+    <div>
+      <div className="header">
+        <div><h1>Missions</h1><p style={{color:'var(--muted)'}}>Active and completed missions</p></div>
+      </div>
+      {missions.map(m => (
+        <div key={m.name} className="project">
+          <div className="project-header">
+            <div className="project-title">{m.name}</div>
+            <span style={{fontSize:12,padding:'4px 10px',background:m.status==='completed'?'#22c55e20':'#f59e0b20',color:m.status==='completed'?'#22c55e':'#f59e0b',borderRadius:12}}>{m.status}</span>
           </div>
-          <div className="user-info">
-            <div className="user-avatar">{user.name?.[0] || 'R'}</div>
-            <div>
-              <div className="user-name">{user.name}</div>
-              <div className="user-role">{user.role}</div>
-            </div>
-            <button className="logout-btn" onClick={handleLogout}>Exit</button>
-          </div>
+          <div className="project-desc">{m.desc}</div>
+          <div className="progress"><div className="progress-fill" style={{width:`${m.progress}%`}}></div></div>
         </div>
-      </aside>
-      
-      <main className="main">
-        {renderPage()}
-      </main>
+      ))}
     </div>
   );
+}
+
+function Toast({ msg, type, onClose }) {
+  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, []);
+  return <div className={`toast ${type}`}><span>{type === 'success' ? '✓' : '✗'}</span>{msg}</div>;
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
