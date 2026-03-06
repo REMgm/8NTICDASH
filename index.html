@@ -550,22 +550,32 @@ function DashboardPage({ commits, loading, onRefresh }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {/* Time Frame Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-card)', padding: '4px', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 4, 
+            background: 'var(--bg-secondary)', 
+            padding: '4px', 
+            borderRadius: '8px', 
+            border: '2px solid var(--border)',
+            boxShadow: 'var(--shadow)'
+          }}>
             {timeFrameOptions.map(option => (
               <button
                 key={option.value}
                 onClick={() => setTimeFrame(option.value)}
                 style={{
-                  padding: '6px 12px',
+                  padding: '8px 14px',
                   borderRadius: '6px',
                   border: 'none',
                   background: timeFrame === option.value ? 'var(--accent)' : 'transparent',
                   color: timeFrame === option.value ? '#fff' : 'var(--text-secondary)',
-                  fontSize: '12px',
-                  fontWeight: 600,
+                  fontSize: '13px',
+                  fontWeight: 700,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   fontFamily: 'var(--font-mono)',
+                  boxShadow: timeFrame === option.value ? '0 2px 8px rgba(14,165,233,0.4)' : 'none',
                 }}
               >
                 {option.label}
@@ -579,9 +589,11 @@ function DashboardPage({ commits, loading, onRefresh }) {
             style={{ 
               background: loading ? 'var(--bg-secondary)' : 'var(--accent)', 
               color: loading ? 'var(--text-muted)' : '#fff',
-              borderColor: 'var(--accent)',
-              fontWeight: 600,
-              padding: '12px 20px'
+              border: '2px solid var(--accent)',
+              fontWeight: 700,
+              padding: '10px 18px',
+              borderRadius: '8px',
+              fontSize: '13px'
             }}
           >
             <Icons.refresh /> {loading ? 'Updating...' : 'Update'}
@@ -657,7 +669,28 @@ function DashboardPage({ commits, loading, onRefresh }) {
                 </div>
               ))
             ) : recentCommits.length === 0 ? (
-              <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No commits found</div>
+              <div style={{ padding: 40, textAlign: 'center' }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
+                <div style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 8 }}>No commits found</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: 12 }}>
+                  Try selecting a different time frame or click Update to fetch latest data.
+                </div>
+                <button 
+                  onClick={() => onRefresh(true)}
+                  style={{ 
+                    marginTop: 16, 
+                    padding: '8px 16px', 
+                    background: 'var(--accent)', 
+                    color: '#fff', 
+                    border: 'none', 
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 600
+                  }}
+                >
+                  Fetch Data
+                </button>
+              </div>
             ) : (
               recentCommits.map((commit, i) => (
                 <div key={commit.sha} className="commit-item" style={{ animationDelay: `${i * 0.05}s` }}>
@@ -812,33 +845,49 @@ function App() {
   }, [dark]);
 
   // Fetch GitHub commits from all REMgm repos
-  const fetchCommits = useCallback(async (showToast = true) => {
+  const fetchCommits = useCallback(async (showToast = false) => {
     setLoading(true);
     try {
       const allCommits = [];
+      let successCount = 0;
+      let errorCount = 0;
       
       for (const repo of GITHUB_REPOS) {
-        const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${repo}/commits?per_page=10`);
-        if (res.ok) {
-          const data = await res.json();
-          // Add repo source to each commit
-          const commitsWithRepo = data.map(c => ({...c, repoSource: repo}));
-          allCommits.push(...commitsWithRepo);
+        try {
+          const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${repo}/commits?per_page=20`);
+          if (res.ok) {
+            const data = await res.json();
+            const commitsWithRepo = data.map(c => ({...c, repoSource: repo}));
+            allCommits.push(...commitsWithRepo);
+            successCount++;
+          } else if (res.status === 403) {
+            // Rate limited
+            errorCount++;
+            console.warn(`Rate limited for ${repo}`);
+          } else {
+            errorCount++;
+          }
+        } catch (repoErr) {
+          console.warn(`Failed to fetch ${repo}:`, repoErr);
+          errorCount++;
         }
       }
       
       // Sort by date (newest first)
       allCommits.sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date));
       
-      // Take top 30
-      setCommits(allCommits.slice(0, 30));
+      setCommits(allCommits.slice(0, 50));
       
       if (showToast) {
-        setToast({ message: `Updated from ${GITHUB_REPOS.length} repositories`, type: 'success' });
+        if (errorCount > 0) {
+          setToast({ message: `Updated ${successCount} repos (${errorCount} rate limited)`, type: 'info' });
+        } else {
+          setToast({ message: `Updated from ${successCount} repositories`, type: 'success' });
+        }
       }
     } catch (err) {
       console.error('Failed to fetch commits:', err);
-      setToast({ message: 'Failed to fetch updates', type: 'error' });
+      setToast({ message: 'Failed to fetch updates. GitHub API rate limit may apply.', type: 'error' });
     }
     setLoading(false);
   }, []);
