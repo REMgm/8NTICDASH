@@ -244,7 +244,7 @@ textarea.form-input{min-height:80px;resize:vertical;font-family:var(--font-displ
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
 // ─── CONFIG ────────────────────────────────────────────────────
-const GITHUB_REPO = 'REMgm/8NTIC';
+const GITHUB_REPOS = ['REMgm/8NTIC', 'REMgm/8NTICDASH'];
 const GENESIS_DATE = new Date('2026-03-06T00:08:00Z');
 const REFRESH_INTERVAL = 60000; // 60 seconds
 
@@ -449,36 +449,71 @@ function DashboardPage({ commits, loading, onRefresh }) {
     const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
     const tickColor = isDark ? '#78716c' : '#a8a29e';
     
-    // Group commits by hour
-    const hourData = {};
+    // Group commits by hour and repo
+    const hourData8NTIC = {};
+    const hourDataDASH = {};
     commits.forEach(c => {
       const hour = new Date(c.commit.author.date).getHours();
       const key = `${hour.toString().padStart(2,'0')}:00`;
-      hourData[key] = (hourData[key] || 0) + 1;
+      if (c.repoSource === '8NTICDASH') {
+        hourDataDASH[key] = (hourDataDASH[key] || 0) + 1;
+      } else {
+        hourData8NTIC[key] = (hourData8NTIC[key] || 0) + 1;
+      }
     });
-    const labels = Object.keys(hourData).sort();
-    const data = labels.map(l => hourData[l]);
+    const allHours = [...new Set([...Object.keys(hourData8NTIC), ...Object.keys(hourDataDASH)])].sort();
+    const data8NTIC = allHours.map(l => hourData8NTIC[l] || 0);
+    const dataDASH = allHours.map(l => hourDataDASH[l] || 0);
 
     chartInstance.current = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels,
-        datasets: [{
-          label: 'Commits',
-          data,
-          backgroundColor: '#0ea5e9',
-          borderRadius: 6,
-          barPercentage: 0.6,
-        }]
+        labels: allHours,
+        datasets: [
+          {
+            label: '8NTIC',
+            data: data8NTIC,
+            backgroundColor: '#0ea5e9',
+            borderRadius: 6,
+            barPercentage: 0.6,
+          },
+          {
+            label: 'DASH',
+            data: dataDASH,
+            backgroundColor: '#a855f7',
+            borderRadius: 6,
+            barPercentage: 0.6,
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: { duration: 1000, easing: 'easeOutQuart' },
-        plugins: { legend: { display: false } },
+        plugins: { 
+          legend: { 
+            display: true,
+            position: 'bottom', 
+            labels: { 
+              boxWidth: 10, 
+              padding: 14, 
+              font: { size: 11, family: 'Space Grotesk' }, 
+              color: tickColor 
+            } 
+          } 
+        },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor } },
-          y: { grid: { color: gridColor }, ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor, stepSize: 1 }, beginAtZero: true }
+          x: { 
+            stacked: true, 
+            grid: { display: false }, 
+            ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor } 
+          },
+          y: { 
+            stacked: true, 
+            grid: { color: gridColor }, 
+            ticks: { font: { size: 10, family: 'JetBrains Mono' }, color: tickColor, stepSize: 1 }, 
+            beginAtZero: true 
+          }
         }
       }
     });
@@ -579,6 +614,7 @@ function DashboardPage({ commits, loading, onRefresh }) {
                     <div className="commit-meta">
                       <span style={{ color: commit.agentConfig.color, fontWeight: 600 }}>{commit.agentKey}</span>
                       <span className="commit-sha">{commit.sha.slice(0, 7)}</span>
+                      <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'var(--bg-secondary)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{commit.repoSource === '8NTICDASH' ? 'DASH' : '8NTIC'}</span>
                       <span>{commit.time}</span>
                     </div>
                   </div>
@@ -720,15 +756,27 @@ function App() {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   }, [dark]);
 
-  // Fetch GitHub commits
+  // Fetch GitHub commits from both repos
   const fetchCommits = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=30`);
-      if (res.ok) {
-        const data = await res.json();
-        setCommits(data);
+      const allCommits = [];
+      
+      for (const repo of GITHUB_REPOS) {
+        const res = await fetch(`https://api.github.com/repos/${repo}/commits?per_page=20`);
+        if (res.ok) {
+          const data = await res.json();
+          // Add repo source to each commit
+          const commitsWithRepo = data.map(c => ({...c, repoSource: repo.split('/')[1]}));
+          allCommits.push(...commitsWithRepo);
+        }
       }
+      
+      // Sort by date (newest first)
+      allCommits.sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date));
+      
+      // Take top 30
+      setCommits(allCommits.slice(0, 30));
     } catch (err) {
       console.error('Failed to fetch commits:', err);
     }
