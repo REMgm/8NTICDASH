@@ -3,77 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>8NTIC — Control Center v2.1</title>
+<title>8NTIC — Control Center v3.0</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0f1a;--card:#1a1a2e;--text:#fff;--muted:#a0a0b0;--accent:#0ea5e9;--green:#22c55e;--amber:#f59e0b;--purple:#a855f7}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);margin:0;min-height:100vh}
-.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 100%)}
-.login-box{background:var(--card);padding:40px;border-radius:16px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.login h1{margin:0 0 8px;font-size:32px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+:root{--bg:#0f0f1a;--card:#1a1a2e;--card-hover:#252542;--text:#fff;--muted:#a0a0b0;--accent:#0ea5e9;--green:#22c55e;--amber:#f59e0b;--purple:#a855f7;--red:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 100%);padding:16px}
+.login-box{background:var(--card);padding:32px;border-radius:16px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login h1{margin:0 0 8px;font-size:28px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .login p{color:var(--muted);margin:0 0 24px;font-size:14px}
-input{width:100%;padding:12px 16px;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px;box-sizing:border-box}
+input{width:100%;padding:12px 16px;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px}
 input:focus{outline:none;border-color:var(--accent)}
 button{cursor:pointer;border:none;font-family:inherit}
 .btn-primary{width:100%;padding:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:14px}
 .btn-primary:hover{opacity:.9}
-.app{display:flex;min-height:100vh}
-.sidebar{width:240px;background:var(--card);padding:20px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0}
-.sidebar-logo{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;padding:0 20px 20px;display:flex;align-items:center;gap:8px}
-.dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+.app{display:flex;min-height:100vh;flex-direction:column}
+@media(min-width:768px){.app{flex-direction:row}}
+.sidebar{background:var(--card);padding:16px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;overflow-x:auto}
+@media(min-width:768px){.sidebar{width:220px;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:20px 0;position:fixed;top:0;left:0;bottom:0;overflow-x:hidden}}
+.sidebar-logo{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap}
+@media(min-width:768px){.sidebar-logo{font-size:24px;padding:0 20px 20px}}
+.dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;color:var(--muted);cursor:pointer;font-size:14px}
+.nav{display:flex;gap:4px}
+@media(min-width:768px){.nav{flex-direction:column;gap:2px}}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--muted);cursor:pointer;font-size:14px;border-radius:8px;white-space:nowrap}
+@media(min-width:768px){.nav-item{padding:12px 20px}}
 .nav-item:hover,.nav-item.active{color:var(--text);background:rgba(14,165,233,.1)}
-.main{margin-left:240px;flex:1;padding:24px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.header h1{margin:0;font-size:24px}
+.main{flex:1;padding:16px;min-width:0}
+@media(min-width:768px){.main{margin-left:220px;padding:24px}}
+.header{display:flex;flex-direction:column;gap:16px;margin-bottom:20px}
+@media(min-width:640px){.header{flex-direction:row;justify-content:space-between;align-items:center}}
+.header h1{margin:0;font-size:22px}
+@media(min-width:640px){.header h1{font-size:24px}}
 .header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .time-selector{display:flex;gap:4px;background:#0f0f1a;padding:4px;border-radius:8px;border:1px solid #2a2a3e}
-.time-btn{padding:8px 14px;border-radius:6px;background:transparent;color:var(--muted);font-size:13px;font-weight:600;border:none;font-family:'JetBrains Mono',monospace}
+.time-btn{padding:8px 12px;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;border:none;font-family:'JetBrains Mono',monospace}
 .time-btn.active{background:var(--accent);color:#fff}
-.update-btn{padding:10px 18px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px}
+.update-btn{padding:10px 16px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;font-size:13px}
 .update-btn:disabled{opacity:.5;cursor:not-allowed}
-.spin{animation:spin 1s linear infinite}
+.spin{animation:spin 1s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.card{background:var(--card);padding:20px;border-radius:12px;border:1px solid #2a2a3e}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
+.card{background:var(--card);padding:16px;border-radius:12px;border:1px solid #2a2a3e}
+@media(min-width:640px){.card{padding:20px}}
+.card:hover{background:var(--card-hover)}
 .stat{text-align:center}
-.stat-value{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.stat-value{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+@media(min-width:640px){.stat-value{font-size:36px}}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+@media(min-width:640px){.stat-label{font-size:12px}}
 .chart-card{grid-column:span 2}
-.chart{height:200px}
-.commits{max-height:300px;overflow-y:auto}
-.commit{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #2a2a3e}
+.chart{height:180px}
+@media(min-width:640px){.chart{height:200px}}
+.commits{max-height:280px;overflow-y:auto}
+.commit{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #2a2a3e}
+@media(min-width:640px){.commit{gap:12px;padding:12px 0}}
 .commit:last-child{border-bottom:none}
-.commit-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;font-family:'JetBrains Mono',monospace}
+.commit-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+@media(min-width:640px){.commit-avatar{width:36px;height:36px;font-size:14px}}
 .commit-content{flex:1;min-width:0}
-.commit-msg{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.commit-meta{display:flex;gap:12px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.repo-badge{padding:2px 6px;background:#2a2a3e;border-radius:4px;font-size:11px}
-.empty{text-align:center;padding:40px;color:var(--muted)}
-.empty-icon{font-size:48px;margin-bottom:16px}
-.toast{position:fixed;bottom:24px;right:24px;padding:16px 20px;background:var(--card);border-radius:8px;border:1px solid #2a2a3e;box-shadow:0 10px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease}
+.commit-msg{font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+@media(min-width:640px){.commit-msg{font-size:14px}}
+.commit-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.repo-badge{padding:2px 6px;background:#2a2a3e;border-radius:4px;font-size:10px}
+.empty{text-align:center;padding:32px;color:var(--muted)}
+@media(min-width:640px){.empty{padding:40px}}
+.empty-icon{font-size:40px;margin-bottom:12px}
+@media(min-width:640px){.empty-icon{font-size:48px}}
+.toast{position:fixed;bottom:16px;right:16px;padding:14px 18px;background:var(--card);border-radius:8px;border:1px solid #2a2a3e;box-shadow:0 10px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;z-index:1000;max-width:90vw}
+@media(min-width:640px){.toast{bottom:24px;right:24px;padding:16px 20px;max-width:none}}
 .toast.success{border-left:3px solid var(--green)}
-.toast.error{border-left:3px solid #ef4444}
+.toast.error{border-left:3px solid var(--red)}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}}
-.agent{display:flex;align-items:center;gap:12px;padding:16px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
-.agent-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.agent-info{flex:1}
-.agent-name{font-weight:600;margin-bottom:2px}
-.agent-role{font-size:13px;color:var(--muted)}
-.agent-meta{display:flex;gap:8px;margin-top:6px}
-.tag{font-size:11px;padding:3px 8px;background:#0f0f1a;border-radius:12px}
-.status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.project{padding:20px;margin-bottom:16px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
-.project-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
-.project-title{font-weight:600;font-size:16px}
-.project-desc{font-size:14px;color:var(--muted);margin-bottom:12px}
+.agent{display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
+.agent-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+@media(min-width:640px){.agent-icon{width:44px;height:44px;font-size:18px}}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-weight:600;margin-bottom:2px;font-size:14px}
+.agent-role{font-size:12px;color:var(--muted)}
+.agent-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.tag{font-size:10px;padding:3px 8px;background:#0f0f1a;border-radius:12px}
+@media(min-width:640px){.tag{font-size:11px}}
+.status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
+.project{padding:16px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
+@media(min-width:640px){.project{padding:20px;margin-bottom:16px}}
+.project-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;gap:8px}
+.project-title{font-weight:600;font-size:15px}
+@media(min-width:640px){.project-title{font-size:16px}}
+.project-desc{font-size:13px;color:var(--muted);margin-bottom:12px}
 .progress{height:6px;background:#0f0f1a;border-radius:3px;margin-top:12px;overflow:hidden}
 .progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s ease}
+
+/* Antfarm Workflow Section */
+.workflow-card{background:var(--card);padding:16px;border-radius:12px;border:1px solid #2a2a3e;margin-bottom:16px}
+@media(min-width:640px){.workflow-card{padding:20px}}
+.workflow-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.workflow-title{font-weight:600;font-size:16px}
+@media(min-width:640px){.workflow-title{font-size:18px}}
+.workflow-status{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
+.workflow-status.running{background:var(--amber);color:#000}
+.workflow-status.completed{background:var(--green);color:#000}
+.workflow-status.failed{background:var(--red);color:#fff}
+.step-list{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;align-items:center;gap:12px;padding:12px;background:#0f0f1a;border-radius:8px}
+.step-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.step-icon.pending{background:#2a2a3e;color:var(--muted)}
+.step-icon.running{background:var(--amber);color:#000;animation:pulse 1.5s infinite}
+.step-icon.completed{background:var(--green);color:#000}
+.step-icon.failed{background:var(--red);color:#fff}
+.step-info{flex:1;min-width:0}
+.step-name{font-weight:500;font-size:13px;margin-bottom:2px}
+.step-agent{font-size:11px;color:var(--muted)}
+.step-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase}
+.step-status.pending{background:#2a2a3e;color:var(--muted)}
+.step-status.running{background:var(--amber);color:#000}
+.step-status.completed{background:var(--green);color:#000}
+.step-status.failed{background:var(--red);color:#fff}
+.refresh-antfarm-btn{padding:8px 14px;background:var(--purple);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;font-size:12px}
+@media(min-width:640px){.refresh-antfarm-btn{padding:10px 16px;font-size:13px}}
+.section-title{font-size:18px;font-weight:600;margin-bottom:16px}
+@media(min-width:640px){.section-title{font-size:20px;margin-bottom:20px}}
 </style>
 </head>
 <body>
@@ -99,6 +156,24 @@ const TIMES = [
   { key: 'month', label: '1M', ms: 30*24*60*60*1000 },
 ];
 
+// Mock Antfarm workflow data - in production this would fetch from Antfarm API
+const MOCK_WORKFLOW = {
+  id: 'b52dc27b',
+  name: 'feature-dev',
+  task: 'Add mission activity timeline component',
+  status: 'running',
+  created: '2026-03-07T10:57:23Z',
+  steps: [
+    { id: 'plan', name: 'Plan', agent: 'planner', status: 'running' },
+    { id: 'setup', name: 'Setup', agent: 'setup', status: 'pending' },
+    { id: 'implement', name: 'Implement', agent: 'developer', status: 'pending' },
+    { id: 'verify', name: 'Verify', agent: 'verifier', status: 'pending' },
+    { id: 'test', name: 'Test', agent: 'tester', status: 'pending' },
+    { id: 'pr', name: 'Create PR', agent: 'developer', status: 'pending' },
+    { id: 'review', name: 'Review', agent: 'reviewer', status: 'pending' },
+  ]
+};
+
 function App() {
   const [user, setUser] = useState(() => {
     const s = localStorage.getItem('8ntic_session');
@@ -109,7 +184,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [timeFrame, setTimeFrame] = useState('day');
   const [toast, setToast] = useState(null);
-  const chartRef = useRef(null);
+  const [workflows, setWorkflows] = useState([MOCK_WORKFLOW]);
+  const [loadingAntfarm, setLoadingAntfarm] = useState(false);
 
   const fetchData = useCallback(async (showToast = false) => {
     setLoading(true);
@@ -133,9 +209,43 @@ function App() {
     setLoading(false);
   }, []);
 
+  const fetchAntfarmWorkflows = useCallback(async () => {
+    setLoadingAntfarm(true);
+    try {
+      // In production, this would call: antfarm workflow runs --json
+      // For now, simulate the API call
+      await new Promise(r => setTimeout(r, 500));
+      
+      // Update mock workflow with rotating status for demo
+      setWorkflows(prev => prev.map(w => {
+        const updatedSteps = w.steps.map((s, i) => {
+          if (i === 0) return { ...s, status: 'completed' };
+          if (i === 1) return { ...s, status: 'running' };
+          return s;
+        });
+        return { ...w, steps: updatedSteps, status: 'running' };
+      }));
+      
+      setToast({ msg: 'Antfarm workflows refreshed', type: 'success' });
+    } catch (e) {
+      setToast({ msg: 'Failed to refresh Antfarm', type: 'error' });
+    }
+    setLoadingAntfarm(false);
+  }, []);
+
   useEffect(() => {
-    if (user) fetchData();
+    if (user) {
+      fetchData();
+      fetchAntfarmWorkflows();
+    }
   }, [user]);
+
+  // Auto-refresh Antfarm workflows every 30 seconds
+  useEffect(() => {
+    if (!user) return;
+    const id = setInterval(fetchAntfarmWorkflows, 30000);
+    return () => clearInterval(id);
+  }, [user, fetchAntfarmWorkflows]);
 
   const filtered = useMemo(() => {
     const t = TIMES.find(x => x.key === timeFrame).ms;
@@ -166,10 +276,13 @@ function App() {
           setTimeFrame={setTimeFrame}
           loading={loading}
           onUpdate={() => fetchData(true)}
-          chartRef={chartRef}
+          workflows={workflows}
+          loadingAntfarm={loadingAntfarm}
+          onRefreshAntfarm={fetchAntfarmWorkflows}
         />}
         {page === 'agents' && <Agents commits={commits} />}
         {page === 'missions' && <Missions />}
+        {page === 'workflows' && <WorkflowsPage workflows={workflows} loading={loadingAntfarm} onRefresh={fetchAntfarmWorkflows} />}
         {toast && <Toast {...toast} onClose={() => setToast(null)} />}
       </main>
     </div>
@@ -202,18 +315,19 @@ function Sidebar({ page, setPage, user, onLogout }) {
     { id: 'dashboard', label: 'Dashboard', icon: '◆' },
     { id: 'agents', label: 'Agents', icon: '●' },
     { id: 'missions', label: 'Missions', icon: '▲' },
+    { id: 'workflows', label: 'Antfarm', icon: '⚡' },
   ];
   return (
     <aside className="sidebar">
       <div className="sidebar-logo"><span className="dot"></span>8NTIC</div>
-      <nav>
+      <nav className="nav">
         {items.map(i => (
           <div key={i.id} className={`nav-item ${page === i.id ? 'active' : ''}`} onClick={() => setPage(i.id)}>
             <span>{i.icon}</span> {i.label}
           </div>
         ))}
       </nav>
-      <div style={{marginTop:'auto',padding:'20px',borderTop:'1px solid #2a2a3e'}}>
+      <div style={{marginTop:'auto',padding:'20px',borderTop:'1px solid #2a2a3e',display:'none'}}>
         <div style={{fontSize:13,fontWeight:600}}>{user.name}</div>
         <div style={{fontSize:12,color:'var(--muted)'}}>{user.role}</div>
         <button onClick={onLogout} style={{marginTop:12,padding:'8px 12px',background:'transparent',color:'var(--muted)',border:'1px solid #2a2a3e',borderRadius:6,cursor:'pointer',fontSize:12}}>Exit</button>
@@ -222,7 +336,7 @@ function Sidebar({ page, setPage, user, onLogout }) {
   );
 }
 
-function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate, chartRef }) {
+function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate, workflows, loadingAntfarm, onRefreshAntfarm }) {
   return (
     <div>
       <div className="header">
@@ -230,7 +344,7 @@ function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate,
           <h1>Dashboard</h1>
           <p>8NTIC Reflective Agent Mesh • {commits.length} commits loaded</p>
         </div>
-        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+        <div className="controls">
           <div className="time-selector">
             {TIMES.map(t => (
               <button key={t.key} className={`time-btn ${timeFrame === t.key ? 'active' : ''}`} onClick={() => setTimeFrame(t.key)}>
@@ -252,9 +366,7 @@ function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate,
         
         <div className="card chart-card">
           <div style={{fontWeight:600,marginBottom:12}}>Activity</div>
-          <div ref={chartRef} className="chart">
-            <Chart commits={commits} />
-          </div>
+          <div className="chart"><Chart commits={commits} /></div>
         </div>
         
         <div className="card chart-card">
@@ -286,6 +398,43 @@ function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate,
             })}
           </div>
         </div>
+      </div>
+
+      <!-- Antfarm Workflows Section -->
+      <div style={{marginTop:24}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+          <div className="section-title">🐜 Antfarm Workflows</div>
+          <button className="refresh-antfarm-btn" onClick={onRefreshAntfarm} disabled={loadingAntfarm}>
+            <span className={loadingAntfarm ? 'spin' : ''}>↻</span> {loadingAntfarm ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
+        
+        {workflows.map(w => (
+          <div key={w.id} className="workflow-card">
+            <div className="workflow-header">
+              <div>
+                <div className="workflow-title">{w.name}: {w.task}</div>
+                <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Run #{w.id} • {new Date(w.created).toLocaleString()}</div>
+              </div>
+              <span className={`workflow-status ${w.status}`}>{w.status}</span>
+            </div>
+            
+            <div className="step-list">
+              {w.steps.map((s, i) => (
+                <div key={s.id} className="step">
+                  <div className={`step-icon ${s.status}`}>
+                    {s.status === 'completed' ? '✓' : s.status === 'running' ? '◐' : s.status === 'failed' ? '✗' : '○'}
+                  </div>
+                  <div className="step-info">
+                    <div className="step-name">{s.name}</div>
+                    <div className="step-agent">{s.agent}</div>
+                  </div>
+                  <span className={`step-status ${s.status}`}>{s.status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -371,6 +520,7 @@ function Missions() {
     { name: 'Genesis Ping', status: 'completed', progress: 100, desc: 'Communication protocol test' },
     { name: 'OpenClaw QuickStart', status: 'active', progress: 75, desc: '$10 setup service' },
     { name: '8NTIC Dashboard', status: 'active', progress: 90, desc: 'Real-time control center' },
+    { name: 'Framework Test 004', status: 'completed', progress: 100, desc: 'Platform validation' },
   ];
   
   return (
@@ -382,10 +532,59 @@ function Missions() {
         <div key={m.name} className="project">
           <div className="project-header">
             <div className="project-title">{m.name}</div>
-            <span style={{fontSize:12,padding:'4px 10px',background:m.status==='completed'?'#22c55e20':'#f59e0b20',color:m.status==='completed'?'#22c55e':'#f59e0b',borderRadius:12}}>{m.status}</span>
+            <span style={{fontSize:12,padding:'4px 10px',background:m.status==='completed'?'#22c55e20':'#f59e0b20',color:m.status==='completed'?'#22c55e':'#f59e0b',borderRadius:12,fontWeight:600,textTransform:'uppercase',fontSize:11}}>{m.status}</span>
           </div>
           <div className="project-desc">{m.desc}</div>
           <div className="progress"><div className="progress-fill" style={{width:`${m.progress}%`}}></div></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WorkflowsPage({ workflows, loading, onRefresh }) {
+  return (
+    <div>
+      <div className="header">
+        <div>
+          <h1>🐜 Antfarm Workflows</h1>
+          <p style={{color:'var(--muted)'}}>Multi-agent development pipelines</p>
+        </div>
+        <button className="refresh-antfarm-btn" onClick={onRefresh} disabled={loading}>
+          <span className={loading ? 'spin' : ''}>↻</span> {loading ? 'Refreshing...' : 'Force Refresh'}
+        </button>
+      </div>
+      
+      {workflows.length === 0 ? (
+        <div className="empty">
+          <div className="empty-icon">🐜</div>
+          <div>No workflows running</div>
+          <div style={{fontSize:13,marginTop:8}}>Start one with: antfarm workflow run &lt;name&gt; "task"</div>
+        </div>
+      ) : workflows.map(w => (
+        <div key={w.id} className="workflow-card">
+          <div className="workflow-header">
+            <div>
+              <div className="workflow-title">{w.name}: {w.task}</div>
+              <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Run #{w.id} • {new Date(w.created).toLocaleString()}</div>
+            </div>
+            <span className={`workflow-status ${w.status}`}>{w.status}</span>
+          </div>
+          
+          <div className="step-list">
+            {w.steps.map(s => (
+              <div key={s.id} className="step">
+                <div className={`step-icon ${s.status}`}>
+                  {s.status === 'completed' ? '✓' : s.status === 'running' ? '◐' : s.status === 'failed' ? '✗' : '○'}
+                </div>
+                <div className="step-info">
+                  <div className="step-name">{s.name}</div>
+                  <div className="step-agent">Agent: {s.agent}</div>
+                </div>
+                <span className={`step-status ${s.status}`}>{s.status}</span>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
