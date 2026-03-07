@@ -3,600 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>8NTIC — Control Center v3.0</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>8NTIC Dashboard</title>
 <style>
-:root{--bg:#0f0f1a;--card:#1a1a2e;--card-hover:#252542;--text:#fff;--muted:#a0a0b0;--accent:#0ea5e9;--green:#22c55e;--amber:#f59e0b;--purple:#a855f7;--red:#ef4444}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
-.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 100%);padding:16px}
-.login-box{background:var(--card);padding:32px;border-radius:16px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.login h1{margin:0 0 8px;font-size:28px;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login p{color:var(--muted);margin:0 0 24px;font-size:14px}
-input{width:100%;padding:12px 16px;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px}
-input:focus{outline:none;border-color:var(--accent)}
-button{cursor:pointer;border:none;font-family:inherit}
-.btn-primary{width:100%;padding:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:14px}
-.btn-primary:hover{opacity:.9}
-.app{display:flex;min-height:100vh;flex-direction:column}
-@media(min-width:768px){.app{flex-direction:row}}
-.sidebar{background:var(--card);padding:16px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;overflow-x:auto}
-@media(min-width:768px){.sidebar{width:220px;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:20px 0;position:fixed;top:0;left:0;bottom:0;overflow-x:hidden}}
-.sidebar-logo{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap}
-@media(min-width:768px){.sidebar-logo{font-size:24px;padding:0 20px 20px}}
-.dot{width:10px;height:10px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.nav{display:flex;gap:4px}
-@media(min-width:768px){.nav{flex-direction:column;gap:2px}}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:var(--muted);cursor:pointer;font-size:14px;border-radius:8px;white-space:nowrap}
-@media(min-width:768px){.nav-item{padding:12px 20px}}
-.nav-item:hover,.nav-item.active{color:var(--text);background:rgba(14,165,233,.1)}
-.main{flex:1;padding:16px;min-width:0}
-@media(min-width:768px){.main{margin-left:220px;padding:24px}}
-.header{display:flex;flex-direction:column;gap:16px;margin-bottom:20px}
-@media(min-width:640px){.header{flex-direction:row;justify-content:space-between;align-items:center}}
-.header h1{margin:0;font-size:22px}
-@media(min-width:640px){.header h1{font-size:24px}}
-.header p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.time-selector{display:flex;gap:4px;background:#0f0f1a;padding:4px;border-radius:8px;border:1px solid #2a2a3e}
-.time-btn{padding:8px 12px;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;border:none;font-family:'JetBrains Mono',monospace}
-.time-btn.active{background:var(--accent);color:#fff}
-.update-btn{padding:10px 16px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;font-size:13px}
-.update-btn:disabled{opacity:.5;cursor:not-allowed}
-.spin{animation:spin 1s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
-@media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr);gap:16px}}
-.card{background:var(--card);padding:16px;border-radius:12px;border:1px solid #2a2a3e}
-@media(min-width:640px){.card{padding:20px}}
-.card:hover{background:var(--card-hover)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f1a;color:#fff;min-height:100vh}
+.login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:#1a1a2e;padding:40px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+h1{margin:0 0 8px;font-size:32px;background:linear-gradient(135deg,#0ea5e9,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+p{color:#a0a0b0;margin:0 0 24px}
+input{width:100%;padding:14px 16px;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;color:#fff;font-size:15px;margin-bottom:12px}
+input:focus{outline:none;border-color:#0ea5e9}
+button{width:100%;padding:14px;background:#0ea5e9;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+button:hover{opacity:.9}
+.error{color:#ef4444;font-size:13px;margin-top:12px;text-align:center}
+#app{display:none}
+.sidebar{background:#1a1a2e;width:240px;height:100vh;position:fixed;left:0;top:0;padding:20px 0}
+.sidebar-logo{font-family:monospace;font-size:22px;font-weight:700;padding:0 20px 20px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-item{padding:12px 20px;color:#a0a0b0;cursor:pointer;font-size:14px}
+.nav-item:hover,.nav-item.active{color:#fff;background:rgba(14,165,233,.1)}
+.main{margin-left:240px;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.header h1{font-size:24px}
+.card{background:#1a1a2e;padding:20px;border-radius:12px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
 .stat{text-align:center}
-.stat-value{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
-@media(min-width:640px){.stat-value{font-size:36px}}
-.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
-@media(min-width:640px){.stat-label{font-size:12px}}
-.chart-card{grid-column:span 2}
-.chart{height:180px}
-@media(min-width:640px){.chart{height:200px}}
-.commits{max-height:280px;overflow-y:auto}
-.commit{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #2a2a3e}
-@media(min-width:640px){.commit{gap:12px;padding:12px 0}}
-.commit:last-child{border-bottom:none}
-.commit-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
-@media(min-width:640px){.commit-avatar{width:36px;height:36px;font-size:14px}}
-.commit-content{flex:1;min-width:0}
-.commit-msg{font-weight:500;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-@media(min-width:640px){.commit-msg{font-size:14px}}
-.commit-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.repo-badge{padding:2px 6px;background:#2a2a3e;border-radius:4px;font-size:10px}
-.empty{text-align:center;padding:32px;color:var(--muted)}
-@media(min-width:640px){.empty{padding:40px}}
-.empty-icon{font-size:40px;margin-bottom:12px}
-@media(min-width:640px){.empty-icon{font-size:48px}}
-.toast{position:fixed;bottom:16px;right:16px;padding:14px 18px;background:var(--card);border-radius:8px;border:1px solid #2a2a3e;box-shadow:0 10px 40px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;z-index:1000;max-width:90vw}
-@media(min-width:640px){.toast{bottom:24px;right:24px;padding:16px 20px;max-width:none}}
-.toast.success{border-left:3px solid var(--green)}
-.toast.error{border-left:3px solid var(--red)}
-@keyframes slideIn{from{transform:translateX(100%);opacity:0}}
-.agent{display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
-.agent-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;flex-shrink:0}
-@media(min-width:640px){.agent-icon{width:44px;height:44px;font-size:18px}}
-.agent-info{flex:1;min-width:0}
-.agent-name{font-weight:600;margin-bottom:2px;font-size:14px}
-.agent-role{font-size:12px;color:var(--muted)}
-.agent-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-.tag{font-size:10px;padding:3px 8px;background:#0f0f1a;border-radius:12px}
-@media(min-width:640px){.tag{font-size:11px}}
-.status{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}
-.project{padding:16px;margin-bottom:12px;background:var(--card);border-radius:12px;border:1px solid #2a2a3e}
-@media(min-width:640px){.project{padding:20px;margin-bottom:16px}}
-.project-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;gap:8px}
-.project-title{font-weight:600;font-size:15px}
-@media(min-width:640px){.project-title{font-size:16px}}
-.project-desc{font-size:13px;color:var(--muted);margin-bottom:12px}
-.progress{height:6px;background:#0f0f1a;border-radius:3px;margin-top:12px;overflow:hidden}
-.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .5s ease}
-
-/* Antfarm Workflow Section */
-.workflow-card{background:var(--card);padding:16px;border-radius:12px;border:1px solid #2a2a3e;margin-bottom:16px}
-@media(min-width:640px){.workflow-card{padding:20px}}
-.workflow-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.workflow-title{font-weight:600;font-size:16px}
-@media(min-width:640px){.workflow-title{font-size:18px}}
-.workflow-status{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase}
-.workflow-status.running{background:var(--amber);color:#000}
-.workflow-status.completed{background:var(--green);color:#000}
-.workflow-status.failed{background:var(--red);color:#fff}
-.step-list{display:flex;flex-direction:column;gap:8px}
-.step{display:flex;align-items:center;gap:12px;padding:12px;background:#0f0f1a;border-radius:8px}
-.step-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.step-icon.pending{background:#2a2a3e;color:var(--muted)}
-.step-icon.running{background:var(--amber);color:#000;animation:pulse 1.5s infinite}
-.step-icon.completed{background:var(--green);color:#000}
-.step-icon.failed{background:var(--red);color:#fff}
-.step-info{flex:1;min-width:0}
-.step-name{font-weight:500;font-size:13px;margin-bottom:2px}
-.step-agent{font-size:11px;color:var(--muted)}
-.step-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase}
-.step-status.pending{background:#2a2a3e;color:var(--muted)}
-.step-status.running{background:var(--amber);color:#000}
-.step-status.completed{background:var(--green);color:#000}
-.step-status.failed{background:var(--red);color:#fff}
-.refresh-antfarm-btn{padding:8px 14px;background:var(--purple);color:#fff;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:6px;font-size:12px}
-@media(min-width:640px){.refresh-antfarm-btn{padding:10px 16px;font-size:13px}}
-.section-title{font-size:18px;font-weight:600;margin-bottom:16px}
-@media(min-width:640px){.section-title{font-size:20px;margin-bottom:20px}}
+.stat-value{font-size:36px;font-weight:700;color:#0ea5e9}
+.stat-label{font-size:12px;color:#a0a0b0;text-transform:uppercase;margin-top:4px}
+.btn{padding:10px 16px;background:#0ea5e9;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+.time-selector{display:flex;gap:4px;background:#0f0f1a;padding:4px;border-radius:8px}
+.time-btn{padding:8px 14px;border-radius:6px;background:transparent;color:#a0a0b0;border:none;font-weight:600;cursor:pointer}
+.time-btn.active{background:#0ea5e9;color:#fff}
+.commit{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #2a2a3e}
+.commit-avatar{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:monospace}
+.workflow-step{display:flex;align-items:center;gap:12px;padding:12px;background:#0f0f1a;border-radius:8px;margin-bottom:8px}
+.step-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.step-icon.done{background:#22c55e;color:#000}
+.step-icon.pending{background:#2a2a3e;color:#a0a0b0}
+.step-icon.running{background:#f59e0b;color:#000}
+@media(max-width:768px){
+.sidebar{width:100%;height:auto;position:relative;padding:10px}
+.main{margin-left:0}
+.grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useRef, useCallback, useMemo } = React;
+<div id="login" class="login">
+  <div class="login-box">
+    <h1>8NTIC</h1>
+    <p>Control Center</p>
+    <input type="email" id="email" placeholder="Email" value="4remgm@gmail.com">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="doLogin()">Enter</button>
+    <div id="error" class="error"></div>
+  </div>
+</div>
 
-const AGENTS = {
-  REM: { color: '#0ea5e9', icon: 'R' },
-  SMARTY: { color: '#22c55e', icon: 'S' },
-  KIMI: { color: '#f59e0b', icon: 'K' },
-  UMBREL: { color: '#a855f7', icon: 'U' },
-  CLAUDE: { color: '#38bdf8', icon: 'C' },
-  GEMINI: { color: '#f472b6', icon: 'G' },
-  PERPLEXITY: { color: '#fb923c', icon: 'P' },
-};
-
-const REPOS = ['8NTIC', '8NTICDASH', '8NTICLAB', 'startwithopenclaw', 'sundai-motivation'];
-const TIMES = [
-  { key: 'hour', label: '1H', ms: 60*60*1000 },
-  { key: 'day', label: '1D', ms: 24*60*60*1000 },
-  { key: 'week', label: '1W', ms: 7*24*60*60*1000 },
-  { key: 'month', label: '1M', ms: 30*24*60*60*1000 },
-];
-
-// Mock Antfarm workflow data - in production this would fetch from Antfarm API
-const MOCK_WORKFLOW = {
-  id: 'b52dc27b',
-  name: 'feature-dev',
-  task: 'Add mission activity timeline component',
-  status: 'running',
-  created: '2026-03-07T10:57:23Z',
-  steps: [
-    { id: 'plan', name: 'Plan', agent: 'planner', status: 'running' },
-    { id: 'setup', name: 'Setup', agent: 'setup', status: 'pending' },
-    { id: 'implement', name: 'Implement', agent: 'developer', status: 'pending' },
-    { id: 'verify', name: 'Verify', agent: 'verifier', status: 'pending' },
-    { id: 'test', name: 'Test', agent: 'tester', status: 'pending' },
-    { id: 'pr', name: 'Create PR', agent: 'developer', status: 'pending' },
-    { id: 'review', name: 'Review', agent: 'reviewer', status: 'pending' },
-  ]
-};
-
-function App() {
-  const [user, setUser] = useState(() => {
-    const s = localStorage.getItem('8ntic_session');
-    return s ? JSON.parse(s) : null;
-  });
-  const [page, setPage] = useState('dashboard');
-  const [commits, setCommits] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [timeFrame, setTimeFrame] = useState('day');
-  const [toast, setToast] = useState(null);
-  const [workflows, setWorkflows] = useState([MOCK_WORKFLOW]);
-  const [loadingAntfarm, setLoadingAntfarm] = useState(false);
-
-  const fetchData = useCallback(async (showToast = false) => {
-    setLoading(true);
-    try {
-      const all = [];
-      for (const repo of REPOS) {
-        try {
-          const res = await fetch(`https://api.github.com/repos/REMgm/${repo}/commits?per_page=30`);
-          if (res.ok) {
-            const data = await res.json();
-            all.push(...data.map(c => ({...c, repo})));
-          }
-        } catch (e) {}
-      }
-      all.sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date));
-      setCommits(all);
-      if (showToast) setToast({ msg: `Loaded ${all.length} commits`, type: 'success' });
-    } catch (e) {
-      setToast({ msg: 'Failed to load data', type: 'error' });
-    }
-    setLoading(false);
-  }, []);
-
-  const fetchAntfarmWorkflows = useCallback(async () => {
-    setLoadingAntfarm(true);
-    try {
-      // In production, this would call: antfarm workflow runs --json
-      // For now, simulate the API call
-      await new Promise(r => setTimeout(r, 500));
-      
-      // Update mock workflow with rotating status for demo
-      setWorkflows(prev => prev.map(w => {
-        const updatedSteps = w.steps.map((s, i) => {
-          if (i === 0) return { ...s, status: 'completed' };
-          if (i === 1) return { ...s, status: 'running' };
-          return s;
-        });
-        return { ...w, steps: updatedSteps, status: 'running' };
-      }));
-      
-      setToast({ msg: 'Antfarm workflows refreshed', type: 'success' });
-    } catch (e) {
-      setToast({ msg: 'Failed to refresh Antfarm', type: 'error' });
-    }
-    setLoadingAntfarm(false);
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      fetchData();
-      fetchAntfarmWorkflows();
-    }
-  }, [user]);
-
-  // Auto-refresh Antfarm workflows every 30 seconds
-  useEffect(() => {
-    if (!user) return;
-    const id = setInterval(fetchAntfarmWorkflows, 30000);
-    return () => clearInterval(id);
-  }, [user, fetchAntfarmWorkflows]);
-
-  const filtered = useMemo(() => {
-    const t = TIMES.find(x => x.key === timeFrame).ms;
-    const cutoff = Date.now() - t;
-    return commits.filter(c => new Date(c.commit.author.date).getTime() > cutoff);
-  }, [commits, timeFrame]);
-
-  const stats = useMemo(() => {
-    const byAgent = {};
-    filtered.forEach(c => {
-      const name = c.commit.author.name;
-      const key = Object.keys(AGENTS).find(k => name.toLowerCase().includes(k.toLowerCase())) || 'REM';
-      byAgent[key] = (byAgent[key] || 0) + 1;
-    });
-    return { total: filtered.length, byAgent };
-  }, [filtered]);
-
-  if (!user) return <Login onLogin={u => { setUser(u); localStorage.setItem('8ntic_session', JSON.stringify(u)); }} />;
-
-  return (
-    <div className="app">
-      <Sidebar page={page} setPage={setPage} user={user} onLogout={() => { localStorage.removeItem('8ntic_session'); setUser(null); }} />
-      <main className="main">
-        {page === 'dashboard' && <Dashboard 
-          commits={filtered} 
-          stats={stats} 
-          timeFrame={timeFrame} 
-          setTimeFrame={setTimeFrame}
-          loading={loading}
-          onUpdate={() => fetchData(true)}
-          workflows={workflows}
-          loadingAntfarm={loadingAntfarm}
-          onRefreshAntfarm={fetchAntfarmWorkflows}
-        />}
-        {page === 'agents' && <Agents commits={commits} />}
-        {page === 'missions' && <Missions />}
-        {page === 'workflows' && <WorkflowsPage workflows={workflows} loading={loadingAntfarm} onRefresh={fetchAntfarmWorkflows} />}
-        {toast && <Toast {...toast} onClose={() => setToast(null)} />}
-      </main>
-    </div>
-  );
-}
-
-function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [pass, setPass] = useState('');
-  const login = () => {
-    if (email === '4remgm@gmail.com' && pass === 'Letmeinn0w4321@!') {
-      onLogin({ email, name: 'REM', role: 'admin' });
-    }
-  };
-  return (
-    <div className="login">
-      <div className="login-box">
-        <h1>8NTIC</h1>
-        <p>Control Center</p>
-        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={pass} onChange={e => setPass(e.target.value)} />
-        <button className="btn-primary" onClick={login}>Enter</button>
-      </div>
-    </div>
-  );
-}
-
-function Sidebar({ page, setPage, user, onLogout }) {
-  const items = [
-    { id: 'dashboard', label: 'Dashboard', icon: '◆' },
-    { id: 'agents', label: 'Agents', icon: '●' },
-    { id: 'missions', label: 'Missions', icon: '▲' },
-    { id: 'workflows', label: 'Antfarm', icon: '⚡' },
-  ];
-  return (
-    <aside className="sidebar">
-      <div className="sidebar-logo"><span className="dot"></span>8NTIC</div>
-      <nav className="nav">
-        {items.map(i => (
-          <div key={i.id} className={`nav-item ${page === i.id ? 'active' : ''}`} onClick={() => setPage(i.id)}>
-            <span>{i.icon}</span> {i.label}
-          </div>
-        ))}
-      </nav>
-      <div style={{marginTop:'auto',padding:'20px',borderTop:'1px solid #2a2a3e',display:'none'}}>
-        <div style={{fontSize:13,fontWeight:600}}>{user.name}</div>
-        <div style={{fontSize:12,color:'var(--muted)'}}>{user.role}</div>
-        <button onClick={onLogout} style={{marginTop:12,padding:'8px 12px',background:'transparent',color:'var(--muted)',border:'1px solid #2a2a3e',borderRadius:6,cursor:'pointer',fontSize:12}}>Exit</button>
-      </div>
-    </aside>
-  );
-}
-
-function Dashboard({ commits, stats, timeFrame, setTimeFrame, loading, onUpdate, workflows, loadingAntfarm, onRefreshAntfarm }) {
-  return (
-    <div>
-      <div className="header">
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo"><span class="dot"></span>8NTIC</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">◆ Dashboard</div>
+    <div class="nav-item" onclick="showPage('agents')">● Agents</div>
+    <div class="nav-item" onclick="showPage('missions')">▲ Missions</div>
+    <div class="nav-item" onclick="showPage('workflows')">⚡ Antfarm</div>
+  </div>
+  
+  <div class="main">
+    <div id="dashboard-page">
+      <div class="header">
         <div>
           <h1>Dashboard</h1>
-          <p>8NTIC Reflective Agent Mesh • {commits.length} commits loaded</p>
+          <p style="color:#a0a0b0">8NTIC Reflective Agent Mesh</p>
         </div>
-        <div className="controls">
-          <div className="time-selector">
-            {TIMES.map(t => (
-              <button key={t.key} className={`time-btn ${timeFrame === t.key ? 'active' : ''}`} onClick={() => setTimeFrame(t.key)}>
-                {t.label}
-              </button>
-            ))}
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="time-selector">
+            <button class="time-btn active" onclick="setTime(this,'day')">1D</button>
+            <button class="time-btn" onclick="setTime(this,'week')">1W</button>
           </div>
-          <button className="update-btn" onClick={onUpdate} disabled={loading}>
-            <span className={loading ? 'spin' : ''}>↻</span> {loading ? 'Loading...' : 'Update'}
-          </button>
+          <button class="btn" onclick="refreshData()">↻ Update</button>
         </div>
       </div>
       
-      <div className="grid">
-        <Card><Stat value={Object.keys(AGENTS).length} label="Agents" color="var(--accent)" /></Card>
-        <Card><Stat value={stats.total} label="Commits" color="var(--green)" /></Card>
-        <Card><Stat value={3} label="Missions" color="var(--amber)" /></Card>
-        <Card><Stat value="$10" label="Revenue" color="var(--purple)" /></Card>
-        
-        <div className="card chart-card">
-          <div style={{fontWeight:600,marginBottom:12}}>Activity</div>
-          <div className="chart"><Chart commits={commits} /></div>
-        </div>
-        
-        <div className="card chart-card">
-          <div style={{fontWeight:600,marginBottom:12}}>Recent Commits</div>
-          <div className="commits">
-            {commits.length === 0 ? (
-              <div className="empty">
-                <div className="empty-icon">📭</div>
-                <div>No commits in this time frame</div>
-              </div>
-            ) : commits.slice(0, 10).map(c => {
-              const author = c.commit.author.name;
-              const agent = Object.keys(AGENTS).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
-              const cfg = AGENTS[agent];
-              const time = new Date(c.commit.author.date).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
-              return (
-                <div key={c.sha} className="commit">
-                  <div className="commit-avatar" style={{background:cfg.color,color:'#fff'}}>{cfg.icon}</div>
-                  <div className="commit-content">
-                    <div className="commit-msg">{c.commit.message.split('\n')[0]}</div>
-                    <div className="commit-meta">
-                      <span style={{color:cfg.color}}>{agent}</span>
-                      <span className="repo-badge">{c.repo}</span>
-                      <span>{time}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <!-- Antfarm Workflows Section -->
-      <div style={{marginTop:24}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-          <div className="section-title">🐜 Antfarm Workflows</div>
-          <button className="refresh-antfarm-btn" onClick={onRefreshAntfarm} disabled={loadingAntfarm}>
-            <span className={loadingAntfarm ? 'spin' : ''}>↻</span> {loadingAntfarm ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </div>
-        
-        {workflows.map(w => (
-          <div key={w.id} className="workflow-card">
-            <div className="workflow-header">
-              <div>
-                <div className="workflow-title">{w.name}: {w.task}</div>
-                <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Run #{w.id} • {new Date(w.created).toLocaleString()}</div>
-              </div>
-              <span className={`workflow-status ${w.status}`}>{w.status}</span>
-            </div>
-            
-            <div className="step-list">
-              {w.steps.map((s, i) => (
-                <div key={s.id} className="step">
-                  <div className={`step-icon ${s.status}`}>
-                    {s.status === 'completed' ? '✓' : s.status === 'running' ? '◐' : s.status === 'failed' ? '✗' : '○'}
-                  </div>
-                  <div className="step-info">
-                    <div className="step-name">{s.name}</div>
-                    <div className="step-agent">{s.agent}</div>
-                  </div>
-                  <span className={`step-status ${s.status}`}>{s.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Card({ children }) {
-  return <div className="card stat">{children}</div>;
-}
-
-function Stat({ value, label, color }) {
-  return (
-    <div>
-      <div className="stat-value" style={{color}}>{value}</div>
-      <div className="stat-label">{label}</div>
-    </div>
-  );
-}
-
-function Chart({ commits }) {
-  const canvasRef = useRef(null);
-  const chartRef = useRef(null);
-  
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const ctx = canvasRef.current.getContext('2d');
-    
-    if (chartRef.current) chartRef.current.destroy();
-    
-    const byHour = {};
-    commits.forEach(c => {
-      const h = new Date(c.commit.author.date).getHours();
-      byHour[h] = (byHour[h] || 0) + 1;
-    });
-    
-    const labels = Object.keys(byHour).sort().map(h => `${h}:00`);
-    const data = Object.keys(byHour).sort().map(h => byHour[h]);
-    
-    chartRef.current = new ChartJS(ctx, {
-      type: 'bar',
-      data: { labels, datasets: [{ data, backgroundColor: 'var(--accent)', borderRadius: 4 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#2a2a3e' } } } }
-    });
-    
-    return () => { if (chartRef.current) chartRef.current.destroy(); };
-  }, [commits]);
-  
-  return <canvas ref={canvasRef} style={{width:'100%',height:'100%'}} />;
-}
-
-function Agents({ commits }) {
-  const counts = {};
-  commits.forEach(c => {
-    const name = c.commit.author.name;
-    const key = Object.keys(AGENTS).find(k => name.toLowerCase().includes(k.toLowerCase())) || 'REM';
-    counts[key] = (counts[key] || 0) + 1;
-  });
-  
-  return (
-    <div>
-      <div className="header">
-        <div><h1>Agents</h1><p style={{color:'var(--muted)'}}>7 identities in the mesh</p></div>
-      </div>
-      {Object.entries(AGENTS).map(([id, cfg]) => (
-        <div key={id} className="agent">
-          <div className="agent-icon" style={{background:cfg.color,color:'#fff'}}>{cfg.icon}</div>
-          <div className="agent-info">
-            <div className="agent-name">{id}</div>
-            <div className="agent-role">Agent</div>
-            <div className="agent-meta">
-              <span className="tag">{counts[id] || 0} commits</span>
-              <span className="tag">online</span>
-            </div>
-          </div>
-          <div className="status"></div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function Missions() {
-  const missions = [
-    { name: 'Genesis Ping', status: 'completed', progress: 100, desc: 'Communication protocol test' },
-    { name: 'OpenClaw QuickStart', status: 'active', progress: 75, desc: '$10 setup service' },
-    { name: '8NTIC Dashboard', status: 'active', progress: 90, desc: 'Real-time control center' },
-    { name: 'Framework Test 004', status: 'completed', progress: 100, desc: 'Platform validation' },
-  ];
-  
-  return (
-    <div>
-      <div className="header">
-        <div><h1>Missions</h1><p style={{color:'var(--muted)'}}>Active and completed missions</p></div>
-      </div>
-      {missions.map(m => (
-        <div key={m.name} className="project">
-          <div className="project-header">
-            <div className="project-title">{m.name}</div>
-            <span style={{fontSize:12,padding:'4px 10px',background:m.status==='completed'?'#22c55e20':'#f59e0b20',color:m.status==='completed'?'#22c55e':'#f59e0b',borderRadius:12,fontWeight:600,textTransform:'uppercase',fontSize:11}}>{m.status}</span>
-          </div>
-          <div className="project-desc">{m.desc}</div>
-          <div className="progress"><div className="progress-fill" style={{width:`${m.progress}%`}}></div></div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function WorkflowsPage({ workflows, loading, onRefresh }) {
-  return (
-    <div>
-      <div className="header">
-        <div>
-          <h1>🐜 Antfarm Workflows</h1>
-          <p style={{color:'var(--muted)'}}>Multi-agent development pipelines</p>
-        </div>
-        <button className="refresh-antfarm-btn" onClick={onRefresh} disabled={loading}>
-          <span className={loading ? 'spin' : ''}>↻</span> {loading ? 'Refreshing...' : 'Force Refresh'}
-        </button>
+      <div class="grid">
+        <div class="card stat"><div class="stat-value">7</div><div class="stat-label">Agents</div></div>
+        <div class="card stat"><div class="stat-value" id="commit-count">0</div><div class="stat-label">Commits</div></div>
+        <div class="card stat"><div class="stat-value">3</div><div class="stat-label">Missions</div></div>
+        <div class="card stat"><div class="stat-value">$10</div><div class="stat-label">Revenue</div></div>
       </div>
       
-      {workflows.length === 0 ? (
-        <div className="empty">
-          <div className="empty-icon">🐜</div>
-          <div>No workflows running</div>
-          <div style={{fontSize:13,marginTop:8}}>Start one with: antfarm workflow run &lt;name&gt; "task"</div>
+      <div class="card">
+        <h3 style="margin-bottom:16px">🐜 Antfarm Workflow</h3>
+        <div class="workflow-step">
+          <div class="step-icon done">✓</div>
+          <div>Plan (planner)</div>
         </div>
-      ) : workflows.map(w => (
-        <div key={w.id} className="workflow-card">
-          <div className="workflow-header">
-            <div>
-              <div className="workflow-title">{w.name}: {w.task}</div>
-              <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>Run #{w.id} • {new Date(w.created).toLocaleString()}</div>
-            </div>
-            <span className={`workflow-status ${w.status}`}>{w.status}</span>
-          </div>
-          
-          <div className="step-list">
-            {w.steps.map(s => (
-              <div key={s.id} className="step">
-                <div className={`step-icon ${s.status}`}>
-                  {s.status === 'completed' ? '✓' : s.status === 'running' ? '◐' : s.status === 'failed' ? '✗' : '○'}
-                </div>
-                <div className="step-info">
-                  <div className="step-name">{s.name}</div>
-                  <div className="step-agent">Agent: {s.agent}</div>
-                </div>
-                <span className={`step-status ${s.status}`}>{s.status}</span>
-              </div>
-            ))}
-          </div>
+        <div class="workflow-step">
+          <div class="step-icon running">◐</div>
+          <div>Setup (setup)</div>
         </div>
-      ))}
+        <div class="workflow-step">
+          <div class="step-icon pending">○</div>
+          <div>Implement (developer)</div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-icon pending">○</div>
+          <div>Verify (verifier)</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3 style="margin-bottom:16px">Recent Commits</h3>
+        <div id="commits-list">Loading...</div>
+      </div>
     </div>
-  );
+  </div>
+</div>
+
+<script>
+const AGENTS = {REM:'#0ea5e9',KIMI:'#f59e0b',SMARTY:'#22c55e',UMBREL:'#a855f7'};
+
+function doLogin() {
+  const email = document.getElementById('email').value;
+  const pass = document.getElementById('password').value;
+  if(email === '4remgm@gmail.com' && pass === 'Letmeinn0w4321@!') {
+    localStorage.setItem('8ntic_session','1');
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('error').textContent = 'Invalid credentials';
+  }
 }
 
-function Toast({ msg, type, onClose }) {
-  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, []);
-  return <div className={`toast ${type}`}><span>{type === 'success' ? '✓' : '✗'}</span>{msg}</div>;
+function loadData() {
+  fetch('https://api.github.com/repos/REMgm/8NTIC/commits?per_page=10')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('commit-count').textContent = data.length;
+      let html = '';
+      data.forEach(c => {
+        const author = c.commit.author.name;
+        const agent = Object.keys(AGENTS).find(k => author.toLowerCase().includes(k.toLowerCase())) || 'REM';
+        const color = AGENTS[agent];
+        html += `<div class="commit">
+          <div class="commit-avatar" style="background:${color}">${agent[0]}</div>
+          <div>
+            <div>${c.commit.message.split('\n')[0]}</div>
+            <div style="color:#a0a0b0;font-size:12px">${agent} • ${new Date(c.commit.author.date).toLocaleTimeString()}</div>
+          </div>
+        </div>`;
+      });
+      document.getElementById('commits-list').innerHTML = html;
+    })
+    .catch(() => {
+      document.getElementById('commits-list').innerHTML = '<div style="color:#a0a0b0">API rate limited. Try again later.</div>';
+    });
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+function refreshData() { loadData(); }
+function setTime(btn, time) {
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function showPage(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+if(localStorage.getItem('8ntic_session')) {
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadData();
+}
 </script>
 </body>
-</html> 
+</html>
